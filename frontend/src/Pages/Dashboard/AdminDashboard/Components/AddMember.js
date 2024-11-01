@@ -8,7 +8,8 @@ import moment from 'moment';
 
 function AddMember() {
 
-    const API_URL = process.env.REACT_APP_API_URL
+    // const API_URL = process.env.REACT_APP_API_URL
+    const API_URL = "http://localhost:3001/"
     const [isLoading, setIsLoading] = useState(false)
 
     const [userFullName, setUserFullName] = useState(null)

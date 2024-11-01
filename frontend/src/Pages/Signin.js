@@ -12,13 +12,16 @@ function Signin() {
     const [error, setError] = useState("")
     const { dispatch } = useContext(AuthContext)
 
-    const API_URL = process.env.REACT_APP_API_URL
+    // const API_URL = process.env.REACT_APP_API_URL
+    const API_URL = "http://localhost:3001/"
     
     const loginCall = async (userCredential, dispatch) => {
+        console.log("hello");
         dispatch({ type: "LOGIN_START" });
         try {
             const res = await axios.post(API_URL+"api/auth/signin", userCredential);
             dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+            console.log(res);
         }
         catch (err) {
             dispatch({ type: "LOGIN_FAILURE", payload: err })
@@ -37,7 +40,7 @@ function Signin() {
         <div className='signin-container'>
             <div className="signin-card">
                 <form onSubmit={handleForm}>
-                    <h2 className="signin-title"> Log in</h2>
+                    <h2 className="signin-title"> Log in!!!</h2>
                     <p className="line"></p>
                     <div className="persontype-question">
                         <p>Are you a Staff member ?</p>
