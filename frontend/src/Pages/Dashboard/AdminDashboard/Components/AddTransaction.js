@@ -6,6 +6,7 @@ import { Dropdown } from 'semantic-ui-react'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment"
+import { useTranslation } from 'react-i18next';
 
 function AddTransaction() {
 
@@ -13,7 +14,7 @@ function AddTransaction() {
     const API_URL = "http://localhost:3001/"
     const [isLoading, setIsLoading] = useState(false)
     const { user } = useContext(AuthContext)
-
+    const { t } = useTranslation();
     const [borrowerId, setBorrowerId] = useState("")
     const [borrowerDetails, setBorrowerDetails] = useState([])
     const [bookId, setBookId] = useState("")
@@ -160,13 +161,13 @@ function AddTransaction() {
 
     return (
         <div>
-            <p className="dashboard-option-title">Add a Transaction</p>
+            <p className="dashboard-option-title">{t('transaction.addTransaction')}</p>
             <div className="dashboard-title-line"></div>
             <form className='transaction-form' onSubmit={addTransaction}>
-                <label className="transaction-form-label" htmlFor="borrowerId">Borrower<span className="required-field">*</span></label><br />
+                <label className="transaction-form-label" htmlFor="borrowerId">{t('transaction.borrower')}<span className="required-field">*</span></label><br />
                 <div className='semanticdropdown'>
                     <Dropdown
-                        placeholder='Select Member'
+                        placeholder={t('transaction.selectMember')}
                         fluid
                         search
                         selection
@@ -177,10 +178,10 @@ function AddTransaction() {
                 </div>
                 <table className="admindashboard-table shortinfo-table" style={borrowerId === "" ? { display: "none" } : {}}>
                     <tr>
-                        <th>Name</th>
-                        <th>Issued</th>
-                        <th>Reserved</th>
-                        <th>Points</th>
+                        <th>{t('transaction.name')}</th>
+                        <th>{t('transaction.issue')}</th>
+                        <th>{t('transaction.reserve')}</th>
+                        {/* <th>Points</th> */}
                     </tr>
                     <tr>
                         <td>{borrowerDetails.userFullName}</td>
@@ -194,16 +195,16 @@ function AddTransaction() {
                         }).length
                         }
                         </td>
-                        <td>{borrowerDetails.points}</td>
+                        {/* <td>{borrowerDetails.points}</td> */}
                     </tr>
                 </table>
                 <table className="admindashboard-table shortinfo-table" style={borrowerId === "" ? { display: "none" } : {}}>
                     <tr>
-                        <th>Book-Name</th>
-                        <th>Transaction</th>
-                        <th>From Date<br /><span style={{ fontSize: "10px" }}>[MM/DD/YYYY]</span></th>
-                        <th>To Date<br /><span style={{ fontSize: "10px" }}>[MM/DD/YYYY]</span></th>
-                        <th>Fine</th>
+                        <th>{t('transaction.bookName')}</th>
+                        <th>{t('transaction.transaction')}</th>
+                        <th>{t('transaction.fromDate')}<br /><span style={{ fontSize: "10px" }}>[MM/DD/YYYY]</span></th>
+                        <th>{t('transaction.toDate')}<br /><span style={{ fontSize: "10px" }}>[MM/DD/YYYY]</span></th>
+                        {/* <th>Fine</th> */}
                     </tr>
                     {
                         borrowerDetails.activeTransactions?.filter((data) => { return data.transactionStatus === "Active" }).map((data, index) => {
@@ -213,17 +214,17 @@ function AddTransaction() {
                                     <td>{data.transactionType}</td>
                                     <td>{data.fromDate}</td>
                                     <td>{data.toDate}</td>
-                                    <td>{(Math.floor((Date.parse(moment(new Date()).format("MM/DD/YYYY")) - Date.parse(data.toDate)) / 86400000)) <= 0 ? 0 : (Math.floor((Date.parse(moment(new Date()).format("MM/DD/YYYY")) - Date.parse(data.toDate)) / 86400000)) * 10}</td>
+                                    {/* <td>{(Math.floor((Date.parse(moment(new Date()).format("MM/DD/YYYY")) - Date.parse(data.toDate)) / 86400000)) <= 0 ? 0 : (Math.floor((Date.parse(moment(new Date()).format("MM/DD/YYYY")) - Date.parse(data.toDate)) / 86400000)) * 10}</td> */}
                                 </tr>
                             )
                         })
                     }
                 </table>
 
-                <label className="transaction-form-label" htmlFor="bookName">Book Name<span className="required-field">*</span></label><br />
+                <label className="transaction-form-label" htmlFor="bookName">{t('transaction.bookName')}<span className="required-field">*</span></label><br />
                 <div className='semanticdropdown'>
                     <Dropdown
-                        placeholder='Select a Book'
+                        placeholder={t('transaction.selectBook')}
                         fluid
                         search
                         selection
@@ -234,15 +235,15 @@ function AddTransaction() {
                 </div>
                 <table className="admindashboard-table shortinfo-table" style={bookId === "" ? { display: "none" } : {}}>
                     <tr>
-                        <th>Available Coipes</th>
-                        <th>Reserved</th>
+                        <th>{t('transaction.copies')}</th>
+                        <th>{t('transaction.reserved')}</th>
                     </tr>
                 </table>
 
-                <label className="transaction-form-label" htmlFor="transactionType">Transaction Type<span className="required-field">*</span></label><br />
+                <label className="transaction-form-label" htmlFor="transactionType">{t('transaction.type')}<span className="required-field">*</span></label><br />
                 <div className='semanticdropdown'>
                     <Dropdown
-                        placeholder='Select Transaction'
+                        placeholder={t('transaction.selectTrans')}
                         fluid
                         selection
                         value={transactionType}
@@ -252,7 +253,7 @@ function AddTransaction() {
                 </div>
                 <br />
 
-                <label className="transaction-form-label" htmlFor="from-date">From Date<span className="required-field">*</span></label><br />
+                <label className="transaction-form-label" htmlFor="from-date">{t('transaction.fromDate')}<span className="required-field">*</span></label><br />
                 <DatePicker
                     className="date-picker"
                     placeholderText="MM/DD/YYYY"
@@ -260,9 +261,9 @@ function AddTransaction() {
                     onChange={(date) => { setFromDate(date); setFromDateString(moment(date).format("MM/DD/YYYY")) }}
                     minDate={new Date()}
                     dateFormat="MM/dd/yyyy"
-                />
+                /><br />
 
-                <label className="transaction-form-label" htmlFor="to-date">To Date<span className="required-field">*</span></label><br />
+                <label className="transaction-form-label" htmlFor="to-date">{t('transaction.toDate')}<span className="required-field">*</span></label><br />
                 <DatePicker
                     className="date-picker"
                     placeholderText="MM/DD/YYYY"
@@ -270,18 +271,18 @@ function AddTransaction() {
                     onChange={(date) => { setToDate(date); setToDateString(moment(date).format("MM/DD/YYYY")) }}
                     minDate={new Date()}
                     dateFormat="MM/dd/yyyy"
-                />
+                /><br />
 
-                <input className="transaction-form-submit" type="submit" value="SUBMIT" disabled={isLoading}></input>
+                <input className="transaction-form-submit" type="submit" value={t('transaction.submit')} disabled={isLoading}></input>
             </form>
-            <p className="dashboard-option-title">Recent Transactions</p>
+            <p className="dashboard-option-title">{t('transaction.recentTrans')}</p>
             <div className="dashboard-title-line"></div>
             <table className="admindashboard-table">
                 <tr>
                     <th>S.No</th>
-                    <th>Book Name</th>
-                    <th>Borrower Name</th>
-                    <th>Date</th>
+                    <th>{t('transaction.bookName')}</th>
+                    <th>{t('transaction.borrowerName')}</th>
+                    <th>{t('transaction.date')}</th>
                 </tr>
                 {
                     recentTransactions.map((transaction, index) => {

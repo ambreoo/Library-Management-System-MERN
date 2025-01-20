@@ -13,12 +13,10 @@ function Footer() {
                 <div className='footer-data'>
                     <div className="contact-details">
                         <h1>Contact Us</h1>
-                        <p>Librarian</p>
-                        <p>Government School</p>
-                        <p>Visakhapatnam-530041</p>
-                        <p>Andhra Pradesh</p>
-                        <p>India</p>
-                        <p><b>Email:</b>example@gmail.com</p>
+                        <p>Business hours 9:30-18:30</p>
+                        <p>CUSV: 408 532 5567</p>
+                        <p>Clinic: 408 733 6678</p>
+                        <p><b>Email:</b>info@cusv.edu</p>
                     </div>
                     <div className='usefull-links'>
                         <h1>Usefull Links</h1>

@@ -44,10 +44,11 @@ router.post("/addbook", async (req, res) => {
         try {
             const newbook = await new Book({
                 bookName: req.body.bookName,
-                alternateTitle: req.body.alternateTitle,
+                congressCode: req.body.congressCode,
+                originalCode: req.body.originalCode,
                 author: req.body.author,
                 bookCountAvailable: req.body.bookCountAvailable,
-                language: req.body.language,
+                isbn: req.body.isbn,
                 publisher: req.body.publisher,
                 bookStatus: req.body.bookSatus,
                 categories: req.body.categories

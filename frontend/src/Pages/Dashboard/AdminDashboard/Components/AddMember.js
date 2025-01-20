@@ -5,13 +5,14 @@ import { Dropdown } from 'semantic-ui-react'
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from 'moment';
+import { useTranslation } from 'react-i18next';
 
 function AddMember() {
 
     // const API_URL = process.env.REACT_APP_API_URL
     const API_URL = "http://localhost:3001/"
     const [isLoading, setIsLoading] = useState(false)
-
+    const { t } = useTranslation();
     const [userFullName, setUserFullName] = useState(null)
     const [admissionId, setAdmissionId] = useState(null)
     const [employeeId, setEmployeeId] = useState(null)
@@ -102,31 +103,31 @@ function AddMember() {
 
     return (
         <div>
-            <p className="dashboard-option-title">Add a Member</p>
+            <p className="dashboard-option-title">{t('addMember.add')}</p>
             <div className="dashboard-title-line"></div>
             <form className="addmember-form" onSubmit={addMember}>
                 <div className='semanticdropdown'>
                     <Dropdown
-                        placeholder='User Type'
+                        placeholder={t('addMember.type')}
                         fluid
                         selection
                         options={userTypes}
                         onChange={(event, data) => setUserType(data.value)}
                     />
                 </div>
-                <label className="addmember-form-label" htmlFor="userFullName">Full Name<span className="required-field">*</span></label><br />
+                <label className="addmember-form-label" htmlFor="userFullName">{t('addMember.name')}<span className="required-field">*</span></label><br />
                 <input className="addmember-form-input" type="text" name="userFullName" value={userFullName} required onChange={(e) => setUserFullName(e.target.value)}></input><br />
 
-                <label className="addmember-form-label" htmlFor={userType === "Student" ? "admissionId" : "employeeId"}>{userType === "Student" ? "Admission Id" : "Employee Id"}<span className="required-field">*</span></label><br />
+                <label className="addmember-form-label" htmlFor={userType === "Student" ? t('addMember.admissionID') : t('addMember.employeeID')}>{userType === "Student" ? t('addMember.admissionID') : t('addMember.employeeID')}<span className="required-field">*</span></label><br />
                 <input className="addmember-form-input" type="text" value={userType === "Student" ? admissionId : employeeId} required onChange={(e) => { userType === "Student" ? setAdmissionId(e.target.value) : setEmployeeId(e.target.value) }}></input><br />
 
-                <label className="addmember-form-label" htmlFor="mobileNumber">Mobile Number<span className="required-field">*</span></label><br />
+                <label className="addmember-form-label" htmlFor="mobileNumber">{t('addMember.mobile')}<span className="required-field">*</span></label><br />
                 <input className="addmember-form-input" type="text" value={mobileNumber} required onChange={(e) => setMobileNumber(e.target.value)}></input><br />
 
-                <label className="addmember-form-label" htmlFor="gender">Gender<span className="required-field">*</span></label><br />
+                <label className="addmember-form-label" htmlFor="gender">{t('addMember.gender')}<span className="required-field">*</span></label><br />
                 <div className='semanticdropdown'>
                     <Dropdown
-                        placeholder='User Type'
+                        placeholder={t('addMember.gender')}
                         fluid
                         selection
                         value={gender}
@@ -135,38 +136,38 @@ function AddMember() {
                     />
                 </div>
 
-                <label className="addmember-form-label" htmlFor="age">Age<span className="required-field">*</span></label><br />
+                <label className="addmember-form-label" htmlFor="age">{t('addMember.age')}<span className="required-field">*</span></label><br />
                 <input className="addmember-form-input" type="text" value={age} required onChange={(e) => setAge(e.target.value)}></input><br />
 
-                <label className="addmember-form-label" htmlFor="dob">Date of Birth<span className="required-field">*</span></label><br />
+                <label className="addmember-form-label" htmlFor="dob">{t('addMember.dob')}<span className="required-field">*</span></label><br />
                 <DatePicker
                     className="date-picker"
                     placeholderText="MM/DD/YYYY"
                     selected={dob}
                     onChange={(date) => { setDob(date); setDobString(moment(date).format("MM/DD/YYYY")) }}
                     dateFormat="MM/dd/yyyy"
-                />
+                /><br />
 
-                <label className="addmember-form-label" htmlFor="address">Address<span className="required-field">*</span></label><br />
+                <label className="addmember-form-label" htmlFor="address">{t('addMember.address')}<span className="required-field">*</span></label><br />
                 <input className="addmember-form-input address-field" value={address} type="text" required onChange={(e) => setAddress(e.target.value)}></input><br />
 
-                <label className="addmember-form-label" htmlFor="email">Email<span className="required-field">*</span></label><br />
+                <label className="addmember-form-label" htmlFor="email">{t('addMember.email')}<span className="required-field">*</span></label><br />
                 <input className="addmember-form-input" type="email" value={email} required onChange={(e) => setEmail(e.target.value)}></input><br />
 
-                <label className="addmember-form-label" htmlFor="password">Password<span className="required-field">*</span></label><br />
+                <label className="addmember-form-label" htmlFor="password">{t('addMember.password')}<span className="required-field">*</span></label><br />
                 <input className="addmember-form-input" type="password" value={password} onChange={(e) => setPassword(e.target.value)}></input><br />
 
-                <input className="addmember-submit" type="submit" value="SUBMIT" disabled={isLoading} ></input>
+                <input className="addmember-submit" type="submit" value={t('addMember.submit')} disabled={isLoading} ></input>
 
             </form>
-            <p className="dashboard-option-title">Add a Member</p>
+            <p className="dashboard-option-title">{t('addMember.add')}</p>
             <div className="dashboard-title-line"></div>
             <table className='admindashboard-table'>
                 <tr>
                     <th>S.No</th>
-                    <th>Member Type</th>
-                    <th>Member ID</th>
-                    <th>Member Name</th>
+                    <th>{t('addMember.memberType')}</th>
+                    <th>{t('addMember.memberID')}</th>
+                    <th>{t('addMember.memberName')}</th>
                 </tr>
                 {
                     recentAddedMembers.map((member, index) => {

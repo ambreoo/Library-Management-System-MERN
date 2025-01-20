@@ -1,57 +1,62 @@
-import React from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { AgGridReact } from "ag-grid-react";
+import 'ag-grid-community/styles/ag-grid.css';
+import "ag-grid-community/styles/ag-theme-quartz.css";
+import { ClientSideRowModelModule, AllCommunityModule, ModuleRegistry, provideGlobalGridOptions } from 'ag-grid-community';
 import "./Allbooks.css";
 
+ModuleRegistry.registerModules([ ClientSideRowModelModule, AllCommunityModule]); 
+
+// Mark all grids as using legacy themes
+provideGlobalGridOptions({ theme: "legacy"});
+
 function Allbooks() {
+  const API_URL = "http://localhost:3001/";
+  const [books, setBooks] = useState([]);
+  const [categories, setCategories] = useState([]);
+
+  useEffect(() => {
+    const getallBooks = async () => {
+      const response = await axios.get(API_URL + "api/books/allbooks");
+      setBooks(response.data);
+    };
+
+    const getAllCategories = async () => {
+      try {
+        const response = await axios.get(API_URL + "api/categories/allcategories");
+        const categoryMap = response.data.reduce((map, category) => {
+          map[category._id] = category.categoryName;
+          return map;
+        }, {});
+        setCategories(categoryMap);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    getallBooks();
+    getAllCategories();
+  }, [API_URL]);
+
+  // Define columns for AG Grid
+  const columns = [
+    { headerName: "Name", field: "bookName", sortable: true, filter: true, flex: 1},
+    { headerName: "Author", field: "author", sortable: true, filter: true, flex: 1},
+    {
+      headerName: "Category",
+      field: "categories",
+      sortable: true,
+      filter: true,
+      valueGetter: (params) =>
+        params.data.categories.map((id) => categories[id]).join(", "),
+    },
+  ];
+
   return (
     <div className="books-page">
       <div className="books">
-        <div className="book-card">
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQp16xiXu1ZtTzbLy-eSwEK4Ng6cUpUZnuGbQ&usqp=CAU"
-            alt=""
-          ></img>
-          <p className="bookcard-title">Wings Of Fire</p>
-          <p className="bookcard-author">By Pranavdhar</p>
-          <div className="bookcard-category">
-            <p>Auto Biography</p>
-          </div>
-          <div className="bookcard-emptybox"></div>
-        </div>
-        <div className="book-card">
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-Rb2t6jA5ml7n57qdTZbAOWX1qSfsLCbaOA&usqp=CAU"
-            alt=""
-          ></img>
-          <p className="bookcard-title">The Power Of Your Subconscious Mind</p>
-          <p className="bookcard-author">By Joseph</p>
-          <div className="bookcard-category">
-            <p>Psychology</p>
-          </div>
-          <div className="bookcard-emptybox"></div>
-        </div>
-        <div className="book-card">
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRRFiDRQ7a-Oo-CnMmnbIMApP1Cq9B5bYx-UA&usqp=CAU"
-            alt=""
-          ></img>
-          <p className="bookcard-title">Elon Musk</p>
-          <p className="bookcard-author">By Elon</p>
-          <div className="bookcard-category">
-            <p>Auto Biography</p>
-          </div>
-          <div className="bookcard-emptybox"></div>
-        </div>
-        <div className="book-card">
-          <img
-            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ-Rb2t6jA5ml7n57qdTZbAOWX1qSfsLCbaOA&usqp=CAU"
-            alt=""
-          ></img>
-          <p className="bookcard-title">The Subtle Art Of Not Giving A Fuck</p>
-          <p className="bookcard-author">By Mark Manson</p>
-          <div className="bookcard-category">
-            <p>COMIC</p>
-          </div>
-          <div className="bookcard-emptybox"></div>
+        <div className="ag-theme-quartz" style={{ width: "90%", height: "85vh", margin: "auto"}}>
+          <AgGridReact rowData={books} columnDefs={columns} pagination={true} paginationPageSize={20}/>
         </div>
       </div>
     </div>

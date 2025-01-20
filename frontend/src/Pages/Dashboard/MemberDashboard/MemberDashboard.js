@@ -14,8 +14,10 @@ import { IconButton } from "@material-ui/core";
 import { AuthContext } from "../../../Context/AuthContext";
 import axios from "axios";
 import moment from "moment";
+import { useTranslation } from 'react-i18next';
 
 function MemberDashboard() {
+  const { t } = useTranslation();
   const [active, setActive] = useState("profile");
   const [sidebar, setSidebar] = useState(false);
 
@@ -74,7 +76,7 @@ function MemberDashboard() {
               setSidebar(false);
             }}
           >
-            <AccountCircleIcon className="dashboard-option-icon" /> Profile
+            <AccountCircleIcon className="dashboard-option-icon" /> {t('dashboard.profile')}
           </a>
           <a
             href="#activebooks@member"
@@ -122,7 +124,7 @@ function MemberDashboard() {
               setSidebar(false);
             }}
           >
-            <PowerSettingsNewIcon className="dashboard-option-icon" /> Log out{" "}
+            <PowerSettingsNewIcon className="dashboard-option-icon" /> {t('dashboard.logout')}{" "}
           </a>
         </div>
 
@@ -150,7 +152,7 @@ function MemberDashboard() {
                 <div className="specific-left-top">
                   <p className="specific-left-topic">
                     <span style={{ fontSize: "18px" }}>
-                      <b>Age</b>
+                      <b>{t('getMember.age')}</b>
                     </span>
                     <span style={{ fontSize: "16px" }}>
                       {memberDetails?.age}
@@ -158,7 +160,7 @@ function MemberDashboard() {
                   </p>
                   <p className="specific-left-topic">
                     <span style={{ fontSize: "18px" }}>
-                      <b>Gender</b>
+                      <b>{t('getMember.gender')}</b>
                     </span>
                     <span style={{ fontSize: "16px" }}>
                       {memberDetails?.gender}
@@ -168,7 +170,7 @@ function MemberDashboard() {
                 <div className="specific-left-bottom">
                   <p className="specific-left-topic">
                     <span style={{ fontSize: "18px" }}>
-                      <b>DOB</b>
+                      <b>{t('getMember.dob')}</b>
                     </span>
                     <span style={{ fontSize: "16px" }}>
                       {memberDetails?.dob}
@@ -176,7 +178,7 @@ function MemberDashboard() {
                   </p>
                   <p className="specific-left-topic">
                     <span style={{ fontSize: "18px" }}>
-                      <b>Address</b>
+                      <b>{t('getMember.address')}</b>
                     </span>
                     <span style={{ fontSize: "16px" }}>
                       {memberDetails?.address}
@@ -225,14 +227,14 @@ function MemberDashboard() {
           </div>
 
           <div className="member-activebooks-content" id="activebooks@member">
-            <p className="member-dashboard-heading">Issued</p>
+            <p className="member-dashboard-heading">{t('getMember.issue')}</p>
             <table className="activebooks-table">
               <tr>
                 <th>S.No</th>
-                <th>Book-Name</th>
-                <th>From Date</th>
-                <th>To Date</th>
-                <th>Fine</th>
+                <th>{t('getMember.bookName')}</th>
+                <th>{t('getMember.fromDate')}</th>
+                <th>{t('getMember.toDate')}</th>
+                {/* <th>Fine</th> */}
               </tr>
               {memberDetails?.activeTransactions
                 ?.filter((data) => {
@@ -245,7 +247,7 @@ function MemberDashboard() {
                       <td>{data.bookName}</td>
                       <td>{data.fromDate}</td>
                       <td>{data.toDate}</td>
-                      <td>
+                      {/* <td>
                         {Math.floor(
                           (Date.parse(moment(new Date()).format("MM/DD/YYYY")) -
                             Date.parse(data.toDate)) /
@@ -259,7 +261,7 @@ function MemberDashboard() {
                                 Date.parse(data.toDate)) /
                                 86400000
                             ) * 10}
-                      </td>
+                      </td> */}
                     </tr>
                   );
                 })}
@@ -270,13 +272,13 @@ function MemberDashboard() {
             className="member-reservedbooks-content"
             id="reservedbooks@member"
           >
-            <p className="member-dashboard-heading">Reserved</p>
+            <p className="member-dashboard-heading">{t('getMember.reserve')}</p>
             <table className="activebooks-table">
               <tr>
                 <th>S.No</th>
-                <th>Book-Name</th>
-                <th>From</th>
-                <th>To</th>
+                <th>{t('getMember.bookName')}</th>
+                <th>{t('getMember.fromDate')}</th>
+                <th>{t('getMember.toDate')}</th>
               </tr>
               {memberDetails?.activeTransactions
                 ?.filter((data) => {
@@ -295,14 +297,14 @@ function MemberDashboard() {
             </table>
           </div>
           <div className="member-history-content" id="history@member">
-            <p className="member-dashboard-heading">History</p>
+            <p className="member-dashboard-heading">{t('getMember.history')}</p>
             <table className="activebooks-table">
               <tr>
                 <th>S.No</th>
-                <th>Book-Name</th>
-                <th>From</th>
-                <th>To</th>
-                <th>Return Date</th>
+                <th>{t('getMember.bookName')}</th>
+                <th>{t('getMember.fromDate')}</th>
+                <th>{t('getMember.toDate')}</th>
+                <th>{t('getMember.returnDate')}</th>
               </tr>
               {memberDetails?.prevTransactions?.map((data, index) => {
                 return (

@@ -1,19 +1,11 @@
 import mongoose from "mongoose";
 
 const BookSchema = new mongoose.Schema({
-    bookName:{
-        type:String,
-        require:true
-    },
-    alternateTitle:{
+    congressCode:{
         type:String,
         default:""
     },
-    author:{
-        type:String,
-        require:true
-    },
-    language:{
+    originalCode:{
         type:String,
         default:""
     },
@@ -21,22 +13,34 @@ const BookSchema = new mongoose.Schema({
         type:String,
         default:""
     },
-    bookCountAvailable:{
-        type:Number,
-        require:true
-    },
-    bookStatus:{
+    isbn:{
         type:String,
-        default:"Available"
+        default:""
     },
     categories:[{ 
         type: mongoose.Types.ObjectId, 
         ref: "BookCategory" 
     }],
+    bookName:{
+        type:String,
+        require:true
+    },
+    author:{
+        type:String,
+        require:true
+    },
+    bookCountAvailable:{
+        type:Number,
+        require:true
+    },
     transactions:[{
         type:mongoose.Types.ObjectId,
         ref:"BookTransaction"
-    }]
+    }],
+    bookStatus:{
+        type:String,
+        default:"Available"
+    }
 },
 {
     timestamps:true
