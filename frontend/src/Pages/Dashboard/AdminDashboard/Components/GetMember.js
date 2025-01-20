@@ -9,8 +9,8 @@ import { useTranslation } from 'react-i18next';
 
 function GetMember() {
 
-    // const API_URL = process.env.REACT_APP_API_URL
-    const API_URL = "http://localhost:3001/"
+    const API_URL = process.env.REACT_APP_API_URL
+    // const API_URL = "http://localhost:3001/"
     const { user } = useContext(AuthContext)
     const [allMembersOptions, setAllMembersOptions] = useState(null)
     const [allTransactions, setAllTransactions] = useState([])
