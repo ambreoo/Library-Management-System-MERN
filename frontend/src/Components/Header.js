@@ -9,7 +9,8 @@ import { AuthContext } from '../Context/AuthContext';
 import { useTranslation } from 'react-i18next';
 
 function Header() {
-    const API_URL = "http://localhost:3001/";
+    // const API_URL = "http://localhost:3001/";
+    const API_URL = process.env.REACT_APP_API_URL
     const [menutoggle, setMenutoggle] = useState(false)
     const [memberDetails, setMemberDetails] = useState(null);
     const { user } = useContext(AuthContext);
