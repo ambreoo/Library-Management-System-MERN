@@ -4,12 +4,14 @@
     justify-content: space-between;
     align-items: center;
     padding: 0px 40px;
-    height: 60px;
+    height: 80px;
     width: 100%;
     position: fixed;
     z-index: 100;
-    background-color: rgb(16,25,13);
-    box-shadow: 0 1px 4px rgba(146,161,176,.15);
+    background-color: #F8F9FA; /* Adjust between 0.3 - 0.5 */
+    /* color: rgba(255, 255, 255, 0.194); */
+    backdrop-filter: blur(5px);
+    /* box-shadow: 0 1px 4px rgba(146,161,176,.15); */
     top: 0%;
 }
 
@@ -36,6 +38,12 @@
     border: 1px solid white;
 }
 
+.logo_img {
+    max-width: 200px;
+    height: auto;
+    cursor: pointer;
+}
+
 .nav-options{
     padding-left: 25px;
     display: flex;
@@ -59,15 +67,16 @@
 }
 
 .option a{
-    color: rgb(233,83,75);
+    color: #434343;
     display: flex;
     align-items: center;
     font-weight: 800;
     font-size: 18px;
+    text-transform: uppercase;
 }
 
 .option a:hover{
-    color: wheat;
+    color: #48484888;
     transition: all ease 0.5s;
 }
 
@@ -81,6 +90,18 @@ a{
 
 .mobile-menu{
     display: block;
+}
+
+.language-select {
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: white;
+    cursor: pointer;
+    font-size: 16px;
+}
+.language-select:hover {
+    border-color: #007BFF;
 }
 
 /* Nav Options are given in this to make the search input as big as possible */

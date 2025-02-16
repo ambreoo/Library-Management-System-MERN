@@ -2,24 +2,35 @@
   display: grid;
   place-items: center;
   height: 100vh;
-  background-color: wheat;
+  width: 100vw;
   position: relative;
 }
 
-a {
-  text-decoration: none;
+/* Dark overlay to match home page */
+.signin-container::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.6); /* Adjust darkness as needed */
+  z-index: 1;
 }
 
+/* Keeps the sign-in card above the overlay */
 .signin-card {
+  position: relative;
+  z-index: 2;
   font-family: sans-serif;
   width: 100%;
   max-width: 350px;
   margin-left: auto;
   margin-right: auto;
-  margin-top: 38px;
+  margin-top: 70px;
   margin-bottom: 38px;
-  border-radius: 10px !important;
-  background-color: #ffff;
+  border-radius: 45px !important;
+  background-color: #ffffffe1;
   box-shadow: 2px 5px 20px rgba(0, 0, 0, 0.1);
 }
 
@@ -27,7 +38,8 @@ form {
   padding: 30px;
 }
 
-.error-message{
+/* Keep all existing styles unchanged */
+.error-message {
   color: red;
   font-weight: bold;
 }
@@ -39,7 +51,7 @@ form {
 }
 
 .signup-option {
-  background-color: rgb(69, 69, 185, 0.2);
+  background-color: rgba(69, 69, 185, 0.2);
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }
@@ -47,12 +59,12 @@ form {
 .line {
   text-align: center;
   font-weight: bold;
-  border-bottom: 2px solid rgb(245 239 239);
+  border-bottom: 2px solid rgb(245, 239, 239);
   line-height: 2px;
   margin: 25px 0;
 }
 
-.persontype-question{
+.persontype-question {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -67,7 +79,7 @@ form {
 }
 
 .signin-fields label {
-  color: rgb(170 166 166);
+  color: rgb(170, 166, 166);
   text-align: left;
   margin-top: 25px;
 }
@@ -88,8 +100,6 @@ form {
   padding: 18px 20px;
   margin-top: 25px;
   margin-bottom: 20px;
-  margin-left: auto !important;
-  margin-left: auto !important;
   width: 100%;
   border-radius: 10px;
   border: none;

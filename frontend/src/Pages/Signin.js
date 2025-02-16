@@ -40,7 +40,7 @@ function Signin() {
     }
 
     return (
-        <div className='signin-container'>
+        <div className='signin-container' style={{ background: "url('/school_picture4.jpg') no-repeat center center/cover" }}>
             <div className="signin-card">
                 <form onSubmit={handleForm}>
                     <h2 className="signin-title">{t('signin.title')}</h2>

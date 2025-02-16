@@ -1,54 +1,56 @@
-import React from 'react'
-import './ImageSlider.css'
-import { Carousel } from 'react-bootstrap'
+import React, { useState } from "react";
+import { useHistory, useLocation } from "react-router-dom";
+import "./ImageSlider.css";
 
-function ImageSlider() {
-    return (
-        <div className='slider'>
-            <Carousel>
-                <Carousel.Item interval={1000}>
-                    <img
-                        className="d-block w-100"
-                        src="/school_picture1.jpg"
-                        alt="First slide"
-                    />
-                    {/* <Carousel.Caption>
-                        <h3>First slide label</h3>
-                        <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
-                    </Carousel.Caption> */}
-                </Carousel.Item>
-                <Carousel.Item interval={500}>
-                    <img
-                        className="d-block w-100"
-                        src="/school_picture2.jpg"
-                        alt="Second slide"
-                    />
-                    {/* <Carousel.Caption>
-                        <h3>Second slide label</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                    </Carousel.Caption> */}
-                </Carousel.Item>
-                <Carousel.Item>
-                    <img
-                        className="d-block w-100"
-                        src="/school_picture3.jpg"
-                        alt="Third slide"
-                    />
-                    {/* <Carousel.Caption>
-                        <h3>Third slide label</h3>
-                        <p>Praesent commodo cursus magna, vel scelerisque nisl consectetur.</p>
-                    </Carousel.Caption> */}
-                </Carousel.Item>
-                <Carousel.Item>
-                    <img
-                        className="d-block w-100"
-                        src="/school_picture4.jpg"
-                        alt="Fourth slide"
-                    />
-                </Carousel.Item>
-            </Carousel>
-        </div>
-    )
+function useQueryParams() {
+  return new URLSearchParams(useLocation().search);
 }
 
-export default ImageSlider
+function ImageSlider() {
+  const history = useHistory();
+  const queryParams = useQueryParams();
+
+  // Pre-fill search inputs if they exist in URL
+  const [selectedCategory, setSelectedCategory] = useState(queryParams.get("category") || "bookName");
+  const [query, setQuery] = useState(queryParams.get("query") || "");
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    history.push(`/books?query=${encodeURIComponent(query)}&category=${selectedCategory}`);
+  };
+
+  return (
+    <div className="image-container">
+      <img className="d-block w-100" src="/school_picture4.jpg" alt="CUSV Library" />
+      <div className="image-overlay"></div>
+
+      <div className="search-header">
+        <h1>Welcome to CUSV Library</h1>
+        <p>Search for books, articles, and resources to support your studies.</p>
+      </div>
+
+      {/* Keep your existing search bar UI */}
+      <div className="search-box">
+        <select 
+          className="filter-dropdown" 
+          value={selectedCategory} 
+          onChange={(e) => setSelectedCategory(e.target.value)}
+        >
+          <option value="bookName">Book</option>
+          <option value="author">Author</option>
+          <option value="categories">Category</option>
+        </select>
+        <input 
+          type="text" 
+          placeholder="Search..." 
+          value={query} 
+          onChange={(e) => setQuery(e.target.value)} 
+          onKeyDown={(e) => e.key === "Enter" && handleSearch(e)}
+        />
+        <button type="submit" onClick={handleSearch}>🔍</button>
+      </div>
+    </div>
+  );
+}
+
+export default ImageSlider;

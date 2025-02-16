@@ -55,11 +55,14 @@ function Header() {
         <div className="header">
             <div className="logo-nav">
             <Link to='/'>
-                <a href="#home">{t('header.title')}</a>
+                {/* <a href="#home">{t('header.title')}</a> */}
+                <div className="logo_wrapper">
+                    <img className="logo_img" src="/school_logo.png" alt="CUSV logo" />
+                </div>
             </Link>
             </div>
             <div className='nav-right'>
-                {/* <input className='search-input' type='text' placeholder='Search a Book'/> */}
+                {/* <input className="search-input" type="text" placeholder="Search a Book" /> */}
                 <ul className={menutoggle ? "nav-options active" : "nav-options"}>
                     <li className="option" onClick={() => { closeMenu() }}>
                         <Link to='/'>
@@ -83,8 +86,10 @@ function Header() {
                         )}
                     </li>
                     <li className="option">
-                        <button onClick={() => changeLanguage('en')}>English</button>
-                        <button onClick={() => changeLanguage('zh')}>中文</button>
+                        <select onChange={(e) => changeLanguage(e.target.value)} className="language-select">
+                            <option value="en">English</option>
+                            <option value="zh">中文</option>
+                        </select>
                     </li>
                 </ul>
             </div>

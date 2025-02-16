@@ -46,281 +46,325 @@ function MemberDashboard() {
   };
 
   return (
-    <div className="dashboard">
-      <div className="dashboard-card">
-        <div className="sidebar-toggler" onClick={() => setSidebar(!sidebar)}>
-          <IconButton>
-            {sidebar ? (
-              <CloseIcon style={{ fontSize: 25, color: "rgb(234, 68, 74)" }} />
-            ) : (
-              <DoubleArrowIcon
-                style={{ fontSize: 25, color: "rgb(234, 68, 74)" }}
-              />
-            )}
-          </IconButton>
-        </div>
-        <div
-          className={sidebar ? "dashboard-options active" : "dashboard-options"}
-        >
-          <div className="dashboard-logo">
-            <LibraryBooksIcon style={{ fontSize: 50 }} />
-            <p className="logo-name">LCMS</p>
-          </div>
-          <a
-            href="#profile@member"
-            className={`dashboard-option ${
-              active === "profile" ? "clicked" : ""
-            }`}
-            onClick={() => {
-              setActive("profile");
-              setSidebar(false);
-            }}
-          >
-            <AccountCircleIcon className="dashboard-option-icon" /> {t('dashboard.profile')}
-          </a>
-          <a
-            href="#activebooks@member"
-            className={`dashboard-option ${
-              active === "active" ? "clicked" : ""
-            }`}
-            onClick={() => {
-              setActive("active");
-              setSidebar(false);
-            }}
-          >
-            <LocalLibraryIcon className="dashboard-option-icon" /> Active
-          </a>
-          <a
-            href="#reservedbook@member"
-            className={`dashboard-option ${
-              active === "reserved" ? "clicked" : ""
-            }`}
-            onClick={() => {
-              setActive("reserved");
-              setSidebar(false);
-            }}
-          >
-            <BookIcon className="dashboard-option-icon" /> Reserved
-          </a>
-          <a
-            href="#history@member"
-            className={`dashboard-option ${
-              active === "history" ? "clicked" : ""
-            }`}
-            onClick={() => {
-              setActive("history");
-              setSidebar(false);
-            }}
-          >
-            <HistoryIcon className="dashboard-option-icon" /> History
-          </a>
-          <a
-            href="#profile@member"
-            className={`dashboard-option ${
-              active === "logout" ? "clicked" : ""
-            }`}
-            onClick={() => {
-              logout();
-              setSidebar(false);
-            }}
-          >
-            <PowerSettingsNewIcon className="dashboard-option-icon" /> {t('dashboard.logout')}{" "}
-          </a>
-        </div>
-
-        <div className="dashboard-option-content">
-          <div className="member-profile-content" id="profile@member">
-            <div className="user-details-topbar">
-              <img
-                className="user-profileimage"
-                src="./assets/images/Profile.png"
-                alt=""
-              ></img>
-              <div className="user-info">
-                <p className="user-name">{memberDetails?.userFullName}</p>
-                <p className="user-id">
-                  {memberDetails?.userType === "Student"
-                    ? memberDetails?.admissionId
-                    : memberDetails?.employeeId}
-                </p>
-                <p className="user-email">{memberDetails?.email}</p>
-                <p className="user-phone">{memberDetails?.mobileNumber}</p>
-              </div>
+    <div className="dashboard-wrapper">
+      <div className="dashboard-bg"></div>
+      <div className="dashboard-overlay"></div> 
+        <div className="dashboard">
+          <div className="dashboard-card">
+            <div className="sidebar-toggler" onClick={() => setSidebar(!sidebar)}>
+              <IconButton>
+                {sidebar ? (
+                  <CloseIcon style={{ fontSize: 25, color: "rgb(234, 68, 74)" }} />
+                ) : (
+                  <DoubleArrowIcon
+                    style={{ fontSize: 25, color: "rgb(234, 68, 74)" }}
+                  />
+                )}
+              </IconButton>
             </div>
-            <div className="user-details-specific">
-              <div className="specific-left">
-                <div className="specific-left-top">
-                  <p className="specific-left-topic">
-                    <span style={{ fontSize: "18px" }}>
-                      <b>{t('getMember.age')}</b>
-                    </span>
-                    <span style={{ fontSize: "16px" }}>
-                      {memberDetails?.age}
-                    </span>
-                  </p>
-                  <p className="specific-left-topic">
-                    <span style={{ fontSize: "18px" }}>
-                      <b>{t('getMember.gender')}</b>
-                    </span>
-                    <span style={{ fontSize: "16px" }}>
-                      {memberDetails?.gender}
-                    </span>
-                  </p>
-                </div>
-                <div className="specific-left-bottom">
-                  <p className="specific-left-topic">
-                    <span style={{ fontSize: "18px" }}>
-                      <b>{t('getMember.dob')}</b>
-                    </span>
-                    <span style={{ fontSize: "16px" }}>
-                      {memberDetails?.dob}
-                    </span>
-                  </p>
-                  <p className="specific-left-topic">
-                    <span style={{ fontSize: "18px" }}>
-                      <b>{t('getMember.address')}</b>
-                    </span>
-                    <span style={{ fontSize: "16px" }}>
-                      {memberDetails?.address}
-                    </span>
-                  </p>
-                </div>
+            <div
+              className={sidebar ? "dashboard-options active" : "dashboard-options"}
+            >
+              <div className="dashboard-logo">
+                <LibraryBooksIcon style={{ fontSize: 50 }} />
+                <p className="logo-name">CUSV</p>
               </div>
-              <div className="specific-right">
-                <div className="specific-right-top">
-                  <p className="specific-right-topic">
-                    <b>Points</b>
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "25px",
-                      fontWeight: "500",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginTop: "15px",
-                    }}
-                  >
-                    540
-                  </p>
-                </div>
-                <div className="dashboard-title-line"></div>
-                <div className="specific-right-bottom">
-                  <p className="specific-right-topic">
-                    <b>Rank</b>
-                  </p>
-                  <p
-                    style={{
-                      fontSize: "25px",
-                      fontWeight: "500",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      marginTop: "15px",
-                    }}
-                  >
-                    {memberDetails?.points}
-                  </p>
-                </div>
-              </div>
+              <a
+                href="#profile@member"
+                className={`dashboard-option ${
+                  active === "profile" ? "clicked" : ""
+                }`}
+                onClick={() => {
+                  setActive("profile");
+                  setSidebar(false);
+                }}
+              >
+                <AccountCircleIcon className="dashboard-option-icon" /> {t('dashboard.profile')}
+              </a>
+              {/* <a
+                href="#activebooks@member"
+                className={`dashboard-option ${
+                  active === "active" ? "clicked" : ""
+                }`}
+                onClick={() => {
+                  setActive("active");
+                  setSidebar(false);
+                }}
+              >
+                <LocalLibraryIcon className="dashboard-option-icon" /> Active
+              </a> */}
+              {/* <a
+                href="#reservedbook@member"
+                className={`dashboard-option ${
+                  active === "reserved" ? "clicked" : ""
+                }`}
+                onClick={() => {
+                  setActive("reserved");
+                  setSidebar(false);
+                }}
+              >
+                <BookIcon className="dashboard-option-icon" /> Reserved
+              </a> */}
+              {/* <a
+                href="#history@member"
+                className={`dashboard-option ${
+                  active === "history" ? "clicked" : ""
+                }`}
+                onClick={() => {
+                  setActive("history");
+                  setSidebar(false);
+                }}
+              >
+                <HistoryIcon className="dashboard-option-icon" /> History
+              </a> */}
+              <a
+                href="#profile@member"
+                className={`dashboard-option ${
+                  active === "logout" ? "clicked" : ""
+                }`}
+                onClick={() => {
+                  logout();
+                  setSidebar(false);
+                }}
+              >
+                <PowerSettingsNewIcon className="dashboard-option-icon" /> {t('dashboard.logout')}{" "}
+              </a>
             </div>
-          </div>
 
-          <div className="member-activebooks-content" id="activebooks@member">
-            <p className="member-dashboard-heading">{t('getMember.issue')}</p>
-            <table className="activebooks-table">
-              <tr>
-                <th>S.No</th>
-                <th>{t('getMember.bookName')}</th>
-                <th>{t('getMember.fromDate')}</th>
-                <th>{t('getMember.toDate')}</th>
-                {/* <th>Fine</th> */}
-              </tr>
-              {memberDetails?.activeTransactions
-                ?.filter((data) => {
-                  return data.transactionType === "Issued";
-                })
-                .map((data, index) => {
-                  return (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{data.bookName}</td>
-                      <td>{data.fromDate}</td>
-                      <td>{data.toDate}</td>
-                      {/* <td>
-                        {Math.floor(
-                          (Date.parse(moment(new Date()).format("MM/DD/YYYY")) -
-                            Date.parse(data.toDate)) /
-                            86400000
-                        ) <= 0
-                          ? 0
-                          : Math.floor(
-                              (Date.parse(
-                                moment(new Date()).format("MM/DD/YYYY")
-                              ) -
+            <div className="dashboard-option-content">
+              <div className="member-profile-content" id="profile@member">
+                <div className="user-details-topbar">
+                  <img
+                    className="user-profileimage"
+                    src="./assets/images/Profile.png"
+                    alt=""
+                  ></img>
+
+                  <div className="specific-left">
+                    <div className="specific-left-top">
+                      <p className="specific-left-topic">
+                        <span style={{ fontSize: "18px" }}>
+                          <b>{t('getMember.age')}</b>
+                        </span>
+                        <span style={{ fontSize: "16px" }}>
+                          {memberDetails?.age}
+                        </span>
+                      </p>
+                      <p className="specific-left-topic">
+                        <span style={{ fontSize: "18px" }}>
+                          <b>{t('getMember.gender')}</b>
+                        </span>
+                        <span style={{ fontSize: "16px" }}>
+                          {memberDetails?.gender}
+                        </span>
+                      </p>
+                    </div>
+                    <div className="specific-left-bottom">
+                      <p className="specific-left-topic">
+                        <span style={{ fontSize: "18px" }}>
+                          <b>{t('getMember.dob')}</b>
+                        </span>
+                        <span style={{ fontSize: "16px" }}>
+                          {memberDetails?.dob}
+                        </span>
+                      </p>
+                      <p className="specific-left-topic">
+                        <span style={{ fontSize: "18px" }}>
+                          <b>{t('getMember.address')}</b>
+                        </span>
+                        <span style={{ fontSize: "16px" }}>
+                          {memberDetails?.address}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="user-info">
+                    <p className="user-name">{memberDetails?.userFullName}</p>
+                    <p className="user-id">
+                      {memberDetails?.userType === "Student"
+                        ? memberDetails?.admissionId
+                        : memberDetails?.employeeId}
+                    </p>
+                    <p className="user-email">{memberDetails?.email}</p>
+                    <p className="user-phone">{memberDetails?.mobileNumber}</p>
+                  </div>
+                </div>
+                <div className="user-details-specific">
+                  {/* <div className="specific-left">
+                    <div className="specific-left-top">
+                      <p className="specific-left-topic">
+                        <span style={{ fontSize: "18px" }}>
+                          <b>{t('getMember.age')}</b>
+                        </span>
+                        <span style={{ fontSize: "16px" }}>
+                          {memberDetails?.age}
+                        </span>
+                      </p>
+                      <p className="specific-left-topic">
+                        <span style={{ fontSize: "18px" }}>
+                          <b>{t('getMember.gender')}</b>
+                        </span>
+                        <span style={{ fontSize: "16px" }}>
+                          {memberDetails?.gender}
+                        </span>
+                      </p>
+                    </div>
+                    <div className="specific-left-bottom">
+                      <p className="specific-left-topic">
+                        <span style={{ fontSize: "18px" }}>
+                          <b>{t('getMember.dob')}</b>
+                        </span>
+                        <span style={{ fontSize: "16px" }}>
+                          {memberDetails?.dob}
+                        </span>
+                      </p>
+                      <p className="specific-left-topic">
+                        <span style={{ fontSize: "18px" }}>
+                          <b>{t('getMember.address')}</b>
+                        </span>
+                        <span style={{ fontSize: "16px" }}>
+                          {memberDetails?.address}
+                        </span>
+                      </p>
+                    </div>
+                  </div> */}
+                  {/* <div className="specific-right">
+                    <div className="specific-right-top">
+                      <p className="specific-right-topic">
+                        <b>Points</b>
+                      </p>
+                      <p
+                        style={{
+                          fontSize: "25px",
+                          fontWeight: "500",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          marginTop: "15px",
+                        }}
+                      >
+                        540
+                      </p>
+                    </div>
+                    <div className="dashboard-title-line"></div>
+                    <div className="specific-right-bottom">
+                      <p className="specific-right-topic">
+                        <b>Rank</b>
+                      </p>
+                      <p
+                        style={{
+                          fontSize: "25px",
+                          fontWeight: "500",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          marginTop: "15px",
+                        }}
+                      >
+                        {memberDetails?.points}
+                      </p>
+                    </div>
+                  </div> */}
+                </div>
+              </div>
+
+              <div className="member-activebooks-content" id="activebooks@member">
+                <p className="member-dashboard-heading">{t('getMember.issue')}</p>
+                <table className="activebooks-table">
+                  <tr>
+                    <th>S.No</th>
+                    <th>{t('getMember.bookName')}</th>
+                    <th>{t('getMember.fromDate')}</th>
+                    <th>{t('getMember.toDate')}</th>
+                    {/* <th>Fine</th> */}
+                  </tr>
+                  {memberDetails?.activeTransactions
+                    ?.filter((data) => {
+                      return data.transactionType === "Issued";
+                    })
+                    .map((data, index) => {
+                      return (
+                        <tr key={index}>
+                          <td>{index + 1}</td>
+                          <td>{data.bookName}</td>
+                          <td>{data.fromDate}</td>
+                          <td>{data.toDate}</td>
+                          {/* <td>
+                            {Math.floor(
+                              (Date.parse(moment(new Date()).format("MM/DD/YYYY")) -
                                 Date.parse(data.toDate)) /
                                 86400000
-                            ) * 10}
-                      </td> */}
-                    </tr>
-                  );
-                })}
-            </table>
-          </div>
+                            ) <= 0
+                              ? 0
+                              : Math.floor(
+                                  (Date.parse(
+                                    moment(new Date()).format("MM/DD/YYYY")
+                                  ) -
+                                    Date.parse(data.toDate)) /
+                                    86400000
+                                ) * 10}
+                          </td> */}
+                        </tr>
+                      );
+                    })}
+                </table>
+              </div>
 
-          <div
-            className="member-reservedbooks-content"
-            id="reservedbooks@member"
-          >
-            <p className="member-dashboard-heading">{t('getMember.reserve')}</p>
-            <table className="activebooks-table">
-              <tr>
-                <th>S.No</th>
-                <th>{t('getMember.bookName')}</th>
-                <th>{t('getMember.fromDate')}</th>
-                <th>{t('getMember.toDate')}</th>
-              </tr>
-              {memberDetails?.activeTransactions
-                ?.filter((data) => {
-                  return data.transactionType === "Reserved";
-                })
-                .map((data, index) => {
-                  return (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{data.bookName}</td>
-                      <td>{data.fromDate}</td>
-                      <td>{data.toDate}</td>
-                    </tr>
-                  );
-                })}
-            </table>
-          </div>
-          <div className="member-history-content" id="history@member">
-            <p className="member-dashboard-heading">{t('getMember.history')}</p>
-            <table className="activebooks-table">
-              <tr>
-                <th>S.No</th>
-                <th>{t('getMember.bookName')}</th>
-                <th>{t('getMember.fromDate')}</th>
-                <th>{t('getMember.toDate')}</th>
-                <th>{t('getMember.returnDate')}</th>
-              </tr>
-              {memberDetails?.prevTransactions?.map((data, index) => {
-                return (
-                  <tr key={index}>
-                    <td>{index + 1}</td>
-                    <td>{data.bookName}</td>
-                    <td>{data.fromDate}</td>
-                    <td>{data.toDate}</td>
-                    <td>{data.returnDate}</td>
+              <div
+                className="member-reservedbooks-content"
+                id="reservedbooks@member"
+              >
+                <p className="member-dashboard-heading">{t('getMember.reserve')}</p>
+                <table className="activebooks-table">
+                  <tr>
+                    <th>S.No</th>
+                    <th>{t('getMember.bookName')}</th>
+                    <th>{t('getMember.fromDate')}</th>
+                    <th>{t('getMember.toDate')}</th>
                   </tr>
-                );
-              })}
-            </table>
+                  {memberDetails?.activeTransactions
+                    ?.filter((data) => {
+                      return data.transactionType === "Reserved";
+                    })
+                    .map((data, index) => {
+                      return (
+                        <tr key={index}>
+                          <td>{index + 1}</td>
+                          <td>{data.bookName}</td>
+                          <td>{data.fromDate}</td>
+                          <td>{data.toDate}</td>
+                        </tr>
+                      );
+                    })}
+                </table>
+              </div>
+              <div className="member-history-content" id="history@member">
+                <p className="member-dashboard-heading">{t('getMember.history')}</p>
+                <table className="activebooks-table">
+                  <tr>
+                    <th>S.No</th>
+                    <th>{t('getMember.bookName')}</th>
+                    <th>{t('getMember.fromDate')}</th>
+                    <th>{t('getMember.toDate')}</th>
+                    <th>{t('getMember.returnDate')}</th>
+                  </tr>
+                  {memberDetails?.prevTransactions?.map((data, index) => {
+                    return (
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{data.bookName}</td>
+                        <td>{data.fromDate}</td>
+                        <td>{data.toDate}</td>
+                        <td>{data.returnDate}</td>
+                      </tr>
+                    );
+                  })}
+                </table>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
     </div>
   );
 }

@@ -1,3 +1,11 @@
+.dashboard-wrapper {
+  background-color: #F8F9FA;
+  width: 100vw;
+  height: 100vh;
+  align-items: center;
+  justify-content: center;
+}
+
 .dashboard {
   display: grid;
   place-items: center;

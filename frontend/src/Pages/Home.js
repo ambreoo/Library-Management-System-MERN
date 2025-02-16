@@ -15,15 +15,15 @@ function Home() {
     return (
         <div id='home'>
             <ImageSlider/>
-            <WelcomeBox/>
-            <About/>
+            {/* <WelcomeBox/> */}
+            {/* <About/> */}
             {/* <Stats/>
             <RecentAddedBooks/>
             <PopularBooks/> */}
             {/* <ReservedBooks/> */}
             {/* <News/> */}
             {/* <PhotoGallery/> */}
-            <Footer/>
+            {/* <Footer/> */}
         </div>
     )
 }

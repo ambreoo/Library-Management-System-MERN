@@ -40,44 +40,46 @@ function AdminDashboard() {
 
 
     return (
-        <div className="dashboard">
-            <div className="dashboard-card">
-                <div className="sidebar-toggler" onClick={() => setSidebar(!sidebar)}>
-                    <IconButton>
-                        {sidebar ? <CloseIcon style={{ fontSize: 25, color: "rgb(234, 68, 74)" }} /> : <DoubleArrowIcon style={{ fontSize: 25, color: "rgb(234, 68, 74)" }} />}
-                    </IconButton>
-                </div>
+        <div className="dashboard-wrapper">
+            <div className="dashboard">
+                <div className="dashboard-card">
+                    <div className="sidebar-toggler" onClick={() => setSidebar(!sidebar)}>
+                        <IconButton>
+                            {sidebar ? <CloseIcon style={{ fontSize: 25, color: "rgb(234, 68, 74)" }} /> : <DoubleArrowIcon style={{ fontSize: 25, color: "rgb(234, 68, 74)" }} />}
+                        </IconButton>
+                    </div>
 
-                {/* Sidebar */}
-                <div className={sidebar ? "dashboard-options active" : "dashboard-options"}>
-                    <div className='dashboard-logo'>
-                        <LibraryBooksIcon style={{ fontSize: 50 }} />
-                        <p className="logo-name">LCMS</p>
-                    </div>
-                    <p className={`dashboard-option ${active === "profile" ? "clicked" : ""}`} onClick={() => { setActive("profile"); setSidebar(false) }}><AccountCircleIcon className='dashboard-option-icon' />{t('dashboard.profile')}</p>
-                    <p className={`dashboard-option ${active === "addbook" ? "clicked" : ""}`} onClick={() => { setActive("addbook"); setSidebar(false) }}><BookIcon className='dashboard-option-icon' />{t('dashboard.addEditBook')}</p>
-                    <p className={`dashboard-option ${active === "addtransaction" ? "clicked" : ""}`} onClick={() => { setActive("addtransaction"); setSidebar(false) }}><ReceiptIcon className='dashboard-option-icon' />{t('dashboard.transaction')}</p>
-                    <p className={`dashboard-option ${active === "getmember" ? "clicked" : ""}`} onClick={() => { setActive("getmember"); setSidebar(false) }}><AccountBoxIcon className='dashboard-option-icon' />{t('dashboard.getMember')}</p>
-                    <p className={`dashboard-option ${active === "addmember" ? "clicked" : ""}`} onClick={() => { setActive("addmember"); setSidebar(false) }}><PersonAddIcon className='dashboard-option-icon' />{t('dashboard.addMember')}</p>
-                    {/* <p className={`dashboard-option ${active === "returntransaction" ? "clicked" : ""}`} onClick={() => { setActive("returntransaction"); setSidebar(false) }}><AssignmentReturnIcon className='dashboard-option-icon' /> Return </p> */}
-                    <p className={`dashboard-option`} onClick={logout}><PowerSettingsNewIcon className='dashboard-option-icon' />{t('dashboard.logout')}</p>
+                    {/* Sidebar */}
+                    <div className={sidebar ? "dashboard-options active" : "dashboard-options"}>
+                        <div className='dashboard-logo'>
+                            <LibraryBooksIcon style={{ fontSize: 50 }} />
+                            <p className="logo-name">CUSV</p>
+                        </div>
+                        <p className={`dashboard-option ${active === "profile" ? "clicked" : ""}`} onClick={() => { setActive("profile"); setSidebar(false) }}><AccountCircleIcon className='dashboard-option-icon' />{t('dashboard.profile')}</p>
+                        <p className={`dashboard-option ${active === "addbook" ? "clicked" : ""}`} onClick={() => { setActive("addbook"); setSidebar(false) }}><BookIcon className='dashboard-option-icon' />{t('dashboard.addEditBook')}</p>
+                        <p className={`dashboard-option ${active === "addtransaction" ? "clicked" : ""}`} onClick={() => { setActive("addtransaction"); setSidebar(false) }}><ReceiptIcon className='dashboard-option-icon' />{t('dashboard.transaction')}</p>
+                        <p className={`dashboard-option ${active === "getmember" ? "clicked" : ""}`} onClick={() => { setActive("getmember"); setSidebar(false) }}><AccountBoxIcon className='dashboard-option-icon' />{t('dashboard.getMember')}</p>
+                        <p className={`dashboard-option ${active === "addmember" ? "clicked" : ""}`} onClick={() => { setActive("addmember"); setSidebar(false) }}><PersonAddIcon className='dashboard-option-icon' />{t('dashboard.addMember')}</p>
+                        {/* <p className={`dashboard-option ${active === "returntransaction" ? "clicked" : ""}`} onClick={() => { setActive("returntransaction"); setSidebar(false) }}><AssignmentReturnIcon className='dashboard-option-icon' /> Return </p> */}
+                        <p className={`dashboard-option`} onClick={logout}><PowerSettingsNewIcon className='dashboard-option-icon' />{t('dashboard.logout')}</p>
 
-                </div>
-                <div className="dashboard-option-content">
-                    <div className="dashboard-addbooks-content" style={active !== "addbook" ? { display: 'none' } : {}}>
-                        <AddBook />
                     </div>
-                    <div className="dashboard-transactions-content" style={active !== "addtransaction" ? { display: 'none' } : {}}>
-                        <AddTransaction />
-                    </div>
-                    <div className="dashboard-addmember-content" style={active !== "addmember" ? { display: 'none' } : {}}>
-                        <AddMember />
-                    </div>
-                    <div className="dashboard-addmember-content" style={active !== "getmember" ? { display: 'none' } : {}}>
-                        <GetMember />
-                    </div>
-                    <div className="dashboard-addmember-content" style={active !== "returntransaction" ? { display: 'none' } : {}}>
-                        <Return />
+                    <div className="dashboard-option-content">
+                        <div className="dashboard-addbooks-content" style={active !== "addbook" ? { display: 'none' } : {}}>
+                            <AddBook />
+                        </div>
+                        <div className="dashboard-transactions-content" style={active !== "addtransaction" ? { display: 'none' } : {}}>
+                            <AddTransaction />
+                        </div>
+                        <div className="dashboard-addmember-content" style={active !== "addmember" ? { display: 'none' } : {}}>
+                            <AddMember />
+                        </div>
+                        <div className="dashboard-addmember-content" style={active !== "getmember" ? { display: 'none' } : {}}>
+                            <GetMember />
+                        </div>
+                        <div className="dashboard-addmember-content" style={active !== "returntransaction" ? { display: 'none' } : {}}>
+                            <Return />
+                        </div>
                     </div>
                 </div>
             </div>
