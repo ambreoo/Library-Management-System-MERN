@@ -13,12 +13,19 @@ function Header() {
     const API_URL = process.env.REACT_APP_API_URL
     const [menutoggle, setMenutoggle] = useState(false)
     const [memberDetails, setMemberDetails] = useState(null);
+    const [isChecked, setIsChecked] = useState(false);
     const { user } = useContext(AuthContext);
     const { t } = useTranslation();
 
     const Toggle = () => {
         setMenutoggle(!menutoggle)
     }
+
+    const handleToggle = () => {
+        const newLanguage = isChecked ? "en" : "zh";
+        changeLanguage(newLanguage);
+        setIsChecked(!isChecked);
+    };
 
     const closeMenu = () => {
         setMenutoggle(false)
@@ -85,11 +92,18 @@ function Header() {
                             <Link to="signin">{t('header.signin')}</Link>
                         )}
                     </li>
-                    <li className="option">
+                    {/* <li className="option">
                         <select onChange={(e) => changeLanguage(e.target.value)} className="language-select">
                             <option value="en">English</option>
                             <option value="zh">中文</option>
                         </select>
+                    </li> */}
+                    <li class="switch">
+                        <input class="toggle" type="checkbox" id="check" checked={isChecked} onChange={handleToggle}></input>
+                        <label for="check" class="language-select">
+                            <span class="zh">中文</span>
+                            <span class="en">EN</span>
+                        </label>
                     </li>
                 </ul>
             </div>
