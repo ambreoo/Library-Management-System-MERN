@@ -1,7 +1,7 @@
 import express from "express";
 import User from "../models/User.js";
 import crypto from "crypto";
-import sendEmail from "../utils/sendEmail.js";
+import sendMail from "../utils/sendMail.js";
 
 const router = express.Router();
 const tokenExpireTime = 24 * 60 * 60 * 1000;
@@ -87,7 +87,7 @@ router.post("/forgot-password", async (req, res) => {
     const resetUrl = `https://cusv-library-mdau.onrender.com/forgot-password?token=${resetToken}`;
 
     // Send the reset URL to the user
-    await sendEmail(user.email, "Password Reset", `Click here to reset your password: ${resetUrl}`);
+    await sendMail(user.email, "Password Reset", `Click here to reset your password: ${resetUrl}`);
 
     res.status(200).json("Password reset link sent to your email.");
   } catch (err) {
