@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Function to send email
-const sendMail = async (to, subject, text) => {
+export const sendMail = async (to, subject, text) => {
   try {
     // Sending email using Mailgun with Nodemailer
     const info = await transporter.sendMail({

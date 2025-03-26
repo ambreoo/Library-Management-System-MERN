@@ -1,7 +1,7 @@
 import express from "express";
 import User from "../models/User.js";
 import crypto from "crypto";
-import sendMail from "../utils/sendMail.js";
+import { sendMail } from "../utils/sendMail.js";
 
 const router = express.Router();
 const tokenExpireTime = 24 * 60 * 60 * 1000;
