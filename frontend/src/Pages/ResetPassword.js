@@ -80,10 +80,11 @@ function ResetPassword() {
                             required
                         />
                     </div>
-
-                    <button type="submit" className="reset-password-button" disabled={loading}>
-                        {loading ? "Resetting..." : "Reset Password"}
-                    </button>
+                    <div className="button-container">
+                        <button type="submit" className="reset-password-button" disabled={loading}>
+                            {loading ? "Resetting..." : "Reset Password"}
+                        </button>
+                    </div>
                 </form>
             </div>
         </div>

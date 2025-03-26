@@ -5,7 +5,7 @@ import bcrypt from "bcrypt";
 import { sendMail } from "../utils/sendMail.js";
 
 const router = express.Router();
-const API_URL = process.env.REACT_APP_API_URL
+const API_URL = process.env.REACT_APP_FRONTEND_URL
 const tokenExpireTime = 24 * 60 * 60 * 1000;
 
 /* User Registration */
