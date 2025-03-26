@@ -5,6 +5,7 @@ import bcrypt from "bcrypt";
 import { sendMail } from "../utils/sendMail.js";
 
 const router = express.Router();
+const API_URL = process.env.REACT_APP_API_URL
 const tokenExpireTime = 24 * 60 * 60 * 1000;
 
 /* User Registration */
@@ -85,7 +86,7 @@ router.post("/forgot-password", async (req, res) => {
     await user.save();
 
     // Generate reset URL with token
-    const resetUrl = `https://cusv-library-mdau.onrender.com/forgot-password?token=${resetToken}`;
+    const resetUrl = API_URL+`forgot-password?token=${resetToken}`;
 
     // Send the reset URL to the user
     await sendMail(user.email, "Password Reset", `Click here to reset your password: ${resetUrl}`);

@@ -10,6 +10,7 @@ function ResetPassword() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const API_URL = process.env.REACT_APP_API_URL
 
     // Extract token from the URL query
     const searchParams = new URLSearchParams(location.search);
@@ -33,7 +34,7 @@ function ResetPassword() {
 
         try {
             // Make a request to the backend to reset the password
-            const response = await axios.post(`https://cusv-library.onrender.com/api/auth/reset-password`, {
+            const response = await axios.post(API_URL+"api/auth/reset-password", {
                 token,
                 newPassword
             });
