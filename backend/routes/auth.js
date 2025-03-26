@@ -1,6 +1,7 @@
 import express from "express";
 import User from "../models/User.js";
 import crypto from "crypto";
+import bcrypt from "bcrypt";
 import { sendMail } from "../utils/sendMail.js";
 
 const router = express.Router();
