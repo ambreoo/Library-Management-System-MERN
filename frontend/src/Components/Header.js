@@ -101,7 +101,7 @@ function Header() {
                     <li class="switch">
                         <input class="toggle" type="checkbox" id="check" checked={isChecked} onChange={handleToggle}></input>
                         <label for="check" class="language-select">
-                            <span class="zh">中文</span>
+                            <span class="zh">中</span>
                             <span class="en">EN</span>
                         </label>
                     </li>

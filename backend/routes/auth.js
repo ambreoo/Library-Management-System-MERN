@@ -1,8 +1,11 @@
 import express from "express";
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
+import crypto from "crypto";
+import sendEmail from "../utils/sendEmail.js";
 
 const router = express.Router();
+const tokenExpireTime = 24 * 60 * 60 * 1000;
 
 /* User Registration */
 router.post("/register", async (req, res) => {
@@ -60,5 +63,40 @@ router.post("/signin", async (req, res) => {
     console.log(err);
   }
 });
+
+/* Forgot Password */
+router.post("/forgot-password", async (req, res) => {
+  try {
+      const { admissionId, employeeId } = req.body;
+      console.log("Received request to reset password for:", admissionId, employeeId);  // Add this log to check the incoming data
+
+      const user = admissionId
+          ? await User.findOne({ admissionId })
+          : await User.findOne({ employeeId });
+
+      if (!user) return res.status(404).json("User not found");
+
+      // Generate reset token
+      const timeToken = Math.floor(new Date().getTime() / tokenExpireTime).toString(16);
+      const token = crypto.createHmac('sha256', user.salt).update(timeToken).digest('hex');
+
+      // Save the reset token and expiry time
+      user.resetPasswordToken = token;
+      user.resetPasswordExpires = Date.now() + tokenExpireTime;
+      await user.save();
+
+      // Generate reset URL with token
+      const resetUrl = `https://cusv-library-mdau.onrender.com/forgot-password?token=${token}`;
+
+      // Send the reset URL to the user
+      await sendEmail(user.email, "Password Reset", `Click here to reset your password: ${resetUrl}`);
+
+      res.status(200).json("Password reset link sent to your email.");
+  } catch (err) {
+      console.log(err); // Log the error
+      res.status(500).json("Error processing password reset request.");
+  }
+});
+
 
 export default router;

@@ -5,6 +5,7 @@ import MemberDashboard from './Pages/Dashboard/MemberDashboard/MemberDashboard.j
 import Allbooks from './Pages/Allbooks';
 import Header from './Components/Header';
 import AdminDashboard from './Pages/Dashboard/AdminDashboard/AdminDashboard.js';
+import ResetPassword from './Pages/ResetPassword';
 import { useContext } from "react"
 import { AuthContext } from "./Context/AuthContext.js"
 
@@ -32,6 +33,7 @@ function App() {
           <Route exact path='/books'>
             <Allbooks />
           </Route>
+          <Route exact path="/forgot-password"><ResetPassword /></Route>
         </Switch>
       </div>
     </Router>
