@@ -111,6 +111,7 @@ form {
 .forget-pass {
   text-align: center;
   display: block;
+  cursor: pointer;
 }
 
 .signup-question {
