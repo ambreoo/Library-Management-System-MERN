@@ -1,34 +1,27 @@
-import nodemailer from 'nodemailer';
-import mailgun from 'mailgun-js';
+import nodemailer from "nodemailer";
 
-// Your Mailgun API key and domain
-const mg = mailgun({
-  apiKey: process.env.MAILGUN_API_KEY,
-  domain: process.env.MAILGUN_DOMAIN,
-})
-
-// Nodemailer transport using Mailgun
 const transporter = nodemailer.createTransport({
-  service: 'Mailgun',
+  host: "smtp.gmail.com",
+  port: 465,
+  secure: true,
   auth: {
-    user: 'api',
-    pass: process.env.MAILGUN_API_KEY,
+    user: process.env.EMAIL_USER || "cusvlibrary@gmail.com",
+    pass: process.env.EMAIL_PASS || "vgte ulfl cpkc xsvu",
   },
 });
 
-// Function to send email
+// Function to send an email
 export const sendMail = async (to, subject, text) => {
   try {
-    // Sending email using Mailgun with Nodemailer
     const info = await transporter.sendMail({
-      from: 'postmaster@sandbox7f73163222dd43c49b76ed4a0b5503df.mailgun.org',
+      from: `"CUSV Library" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       text,
     });
 
-    console.log('Message sent:', info.messageId);
+    console.log("Message sent:", info.messageId);
   } catch (error) {
-    console.log('Error sending email:', error);
+    console.log("Error sending email:", error);
   }
 };
