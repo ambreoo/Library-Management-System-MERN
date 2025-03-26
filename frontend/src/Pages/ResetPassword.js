@@ -33,7 +33,7 @@ function ResetPassword() {
 
         try {
             // Make a request to the backend to reset the password
-            const response = await axios.post(`https://cusv-library.onrender.com/api/auth/forgot-password`, {
+            const response = await axios.post(`https://cusv-library.onrender.com/api/auth/reset-password`, {
                 token,
                 newPassword
             });

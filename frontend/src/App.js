@@ -34,6 +34,7 @@ function App() {
             <Allbooks />
           </Route>
           <Route exact path="/forgot-password"><ResetPassword /></Route>
+          <Route exact path="/reset-password"><ResetPassword /></Route>
         </Switch>
       </div>
     </Router>
