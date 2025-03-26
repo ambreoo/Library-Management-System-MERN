@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useLocation, useHistory } from 'react-router-dom';
-import './ResetPassword.css'; // Assuming you have a CSS file for styling
+import './ResetPassword.css';
 
 function ResetPassword() {
     const location = useLocation(); // To access the URL query
@@ -52,40 +52,44 @@ function ResetPassword() {
     };
 
     return (
-        <div className="reset-password-container">
-            <div className="reset-password-card">
-                <h2>Reset Your Password</h2>
-                {error && <div className="error-message">{error}</div>}
-                <form onSubmit={handlePasswordReset}>
-                    <div className="input-field-reset">
-                        <label htmlFor="newPassword">New Password</label>
-                        <input className="input-reset"
-                            type="password"
-                            id="newPassword"
-                            placeholder="Enter your new password"
-                            value={newPassword}
-                            onChange={(e) => setNewPassword(e.target.value)}
-                            required
-                        />
-                    </div>
+        <div className="image-container">
+            <img className="d-block w-100" src="/school_picture4.jpg" alt="CUSV Library" />
+            <div className="image-overlay"></div>
+            <div className="reset-password-container">
+                <div className="reset-password-card">
+                    <h2>Reset Your Password</h2>
+                    {error && <div className="error-message">{error}</div>}
+                    <form onSubmit={handlePasswordReset}>
+                        <div className="input-field-reset">
+                            <label htmlFor="newPassword">New Password</label>
+                            <input className="input-reset"
+                                type="password"
+                                id="newPassword"
+                                placeholder="Enter your new password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                required
+                            />
+                        </div>
 
-                    <div className="input-field-reset">
-                        <label htmlFor="confirmPassword">Confirm Password</label>
-                        <input className="input-reset"
-                            type="password"
-                            id="confirmPassword"
-                            placeholder="Confirm your new password"
-                            value={confirmPassword}
-                            onChange={(e) => setConfirmPassword(e.target.value)}
-                            required
-                        />
-                    </div>
-                    <div className="button-container">
-                        <button type="submit" className="reset-password-button" disabled={loading}>
-                            {loading ? "Resetting..." : "Reset Password"}
-                        </button>
-                    </div>
-                </form>
+                        <div className="input-field-reset">
+                            <label htmlFor="confirmPassword">Confirm Password</label>
+                            <input className="input-reset"
+                                type="password"
+                                id="confirmPassword"
+                                placeholder="Confirm your new password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div className="button-container">
+                            <button type="submit" className="reset-password-button" disabled={loading}>
+                                {loading ? "Resetting..." : "Reset Password"}
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     );
