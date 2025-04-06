@@ -18,17 +18,16 @@ function Allbooks() {
   const API_URL = process.env.REACT_APP_API_URL;
   const history = useHistory();
   const queryParams = useQuery();
-  const gridRef = useRef(null); // Grid reference
+  const gridRef = useRef(null);
 
   const [selectedCategory, setSelectedCategory] = useState(queryParams.get("category") || "bookName");
   const [searchQueryResult, setSearchQueryResult] = useState(queryParams.get("query") || "");
   const [books, setBooks] = useState([]);  
   const [filteredBooks, setFilteredBooks] = useState([]);
   const [categories, setCategories] = useState({});
-  const [gridReady, setGridReady] = useState(false); // Ensure grid is initialized
-  const [isLoading, setIsLoading] = useState(true); // Track if data is loading
+  const [gridReady, setGridReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Function to update URL dynamically
   const updateURL = (query, category) => {
     const params = new URLSearchParams();
     if (query) params.set("query", query);
@@ -48,30 +47,28 @@ function Allbooks() {
     updateURL(searchQueryResult, newCategory);
   };
 
-  // Listen for URL changes
   useEffect(() => {
     setSelectedCategory(queryParams.get("category") || "bookName");
     setSearchQueryResult(queryParams.get("query") || "");
   }, [queryParams]);
 
-  // Fetch books only when the grid is ready
   useEffect(() => {
     const getAllBooks = async () => {
       if (!gridReady || !gridRef.current?.api) return;
 
-      gridRef.current.api.showLoadingOverlay(); // Ensure loading overlay is shown
-      setIsLoading(true); // Keep loading state active
+      gridRef.current.api.showLoadingOverlay();
+      setIsLoading(true);
 
       try {
         const response = await axios.get(`${API_URL}api/books/allbooks`);
         
         setTimeout(() => {
           setBooks(response.data);
-          setFilteredBooks(response.data); // Ensure books are displayed immediately
-          setIsLoading(false); // Mark loading as complete
+          setFilteredBooks(response.data);
+          setIsLoading(false);
 
           if (gridRef.current?.api) {
-            gridRef.current.api.hideOverlay(); // Hide loading overlay only when books are ready
+            gridRef.current.api.hideOverlay();
           }
         }, 300);
       } catch (error) {
@@ -80,12 +77,25 @@ function Allbooks() {
       }
     };
 
+    const getAllCategories = async () => {
+      try {
+        const response = await axios.get(`${API_URL}api/categories/allcategories`);
+        const categoryMap = response.data.reduce((map, cat) => {
+          map[cat._id.toString()] = cat.categoryName;
+          return map;
+        }, {});
+        setCategories(categoryMap);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
     getAllBooks();
+    getAllCategories();
   }, [API_URL, gridReady]);
 
-  // Filter books dynamically
   useEffect(() => {
-    if (isLoading) return; // Prevent flickering while loading
+    if (isLoading) return;
 
     const queryLower = searchQueryResult.toLowerCase();
 
@@ -107,7 +117,6 @@ function Allbooks() {
     setFilteredBooks(results);
   }, [searchQueryResult, selectedCategory, books, categories, isLoading]);
 
-  // Define columns for AG Grid
   const columns = [
     { headerName: "Name", field: "bookName", sortable: true, flex: 1 },
     { headerName: "Author", field: "author", sortable: true, flex: 1 },
@@ -116,7 +125,9 @@ function Allbooks() {
       field: "categories",
       sortable: true,
       valueGetter: (params) =>
-        params.data.categories?.map((id) => categories[id]).join(", ") || "",
+        Array.isArray(params.data.categories)
+          ? params.data.categories.map((id) => categories[id] || "Unknown").join(", ")
+          : "",
     },
   ];
 
@@ -137,7 +148,7 @@ function Allbooks() {
             </select>
             <input 
               type="text" 
-              placeholder={isLoading ? "Loading..." : "Search..."} // Change placeholder while loading
+              placeholder={isLoading ? "Loading..." : "Search..."}
               value={searchQueryResult} 
               onChange={handleQueryChange}  
               readOnly={isLoading}
@@ -145,7 +156,6 @@ function Allbooks() {
           </div>
         </div>
 
-        {/* AG Grid - Use `onGridReady` to ensure proper initialization */}
         <div className="ag-theme-quartz" style={{ width: "90%", height: "80vh", margin: "auto"}}>
           <AgGridReact 
             ref={gridRef}
