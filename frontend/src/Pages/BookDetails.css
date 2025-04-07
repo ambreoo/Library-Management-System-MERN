@@ -1,100 +1,165 @@
 .book-details {
-    max-width: 800px;
-    margin: 200px auto 40px auto; /* pushes the whole box down */
-    padding: 20px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: #fff;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    border-radius: 12px;
-  }
+  position: relative;
+  max-width: 800px;
+  margin: 200px auto 40px auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #fff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+}
 
-  .back-button-container {
-    padding-bottom: 20px;
-  }  
-  
-  .back-button {
-    background-color: #1976d2;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    transition: background-color 0.2s ease;
-  }
-  
-  .back-button:hover {
-    background-color: #125ca3;
-  }
-  
-  .book-info {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 24px;
-  }
-  
-  .book-cover {
-    flex: 1 1 200px;
-    max-width: 240px;
-  }
-  
-  .book-cover img {
-    width: 100%;
-    border-radius: 8px;
-    object-fit: cover;
-  }
-  
-  .no-image {
-    width: 100%;
-    height: 320px;
-    background-color: #eee;
-    color: #777;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-style: italic;
-    border-radius: 8px;
-  }
-  
-  .book-meta {
-    flex: 2 1 400px;
-  }
-  
-  .book-meta h1 {
-    font-size: 24px;
-    margin-bottom: 12px;
-  }
-  
-  .book-meta p {
-    margin: 6px 0;
-    font-size: 16px;
-    line-height: 1.5;
-  }
-  
-  .book-nav-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin-top: 30px;
-  }
-  
-  .book-nav-buttons button {
-    background-color: #1976d2;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .book-nav-buttons button:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-  }
-  
-  .book-nav-buttons button:hover:not(:disabled) {
-    background-color: #125ca3;
-  }
+.back-button-container {
+  padding-bottom: 20px;
+}  
+
+.back-button {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.back-button:hover {
+  background-color: #125ca3;
+}
+
+.book-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+}
+
+.book-cover {
+  flex: 1 1 200px;
+  max-width: 240px;
+}
+
+.book-cover img {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.no-image {
+  width: 100%;
+  height: 320px;
+  background-color: #eee;
+  color: #777;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-style: italic;
+  border-radius: 8px;
+}
+
+.book-meta {
+  flex: 2 1 400px;
+}
+
+.book-meta h1 {
+  font-size: 24px;
+  margin-bottom: 12px;
+}
+
+.book-meta p {
+  margin: 6px 0;
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+.book-nav-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 30px;
+}
+
+.save-button {
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.save-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.save-button:hover:not(:disabled) {
+  background-color: #125ca3;
+}
+
+.edit-overlay-input {
+  width: 100%;
+  max-width: 500px;
+  font: inherit;
+  font-size: inherit;
+  color: inherit;
+  background-color: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 6px 10px;
+  margin-top: 4px;
+}
+
+.edit-button {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  font-size: 20px;
+  cursor: pointer;
+  border: none;
+  color: #1976d2;
+  transition: transform 0.2s;
+}
+
+.edit-button:hover {
+  transform: scale(1.2);
+  color: #125ca3;
+}
+
+.cancel-button {
+  background-color: white;
+  /* color: #1976d2; */
+  border: 2px solid #1976d2;
+  padding: 10px 20px;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.cancel-button:hover {
+  background-color: #e3f2fd;
+}
+
+.counter-controls.inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.counter-controls.inline button {
+  background: none;
+  border: none;
+  font-size: 16px;
+  color: #1976d2;
+  cursor: pointer;
+}
+
+.counter-controls.inline button:hover {
+  color: #125ca3;
+}
+
   
