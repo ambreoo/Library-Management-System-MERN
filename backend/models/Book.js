@@ -33,14 +33,14 @@ const BookSchema = new mongoose.Schema({
         type:Number,
         require:true
     },
+    coverImageUrl:{
+        type:String,
+        default: ""
+    },
     transactions:[{
         type:mongoose.Types.ObjectId,
         ref:"BookTransaction"
-    }],
-    bookStatus:{
-        type:String,
-        default:"Available"
-    }
+    }]
 },
 {
     timestamps:true

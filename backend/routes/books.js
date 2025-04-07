@@ -50,7 +50,7 @@ router.post("/addbook", async (req, res) => {
                 bookCountAvailable: req.body.bookCountAvailable,
                 isbn: req.body.isbn,
                 publisher: req.body.publisher,
-                bookStatus: req.body.bookSatus,
+                coverImageUrl: req.body.coverImageUrl,
                 categories: req.body.categories
             })
             const book = await newbook.save()

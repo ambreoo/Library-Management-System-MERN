@@ -30,8 +30,8 @@ function Allbooks() {
 
   const updateURL = (query, category) => {
     const params = new URLSearchParams();
-    if (query) params.set("query", query);
     if (category) params.set("category", category);
+    if (query) params.set("query", query);
     history.replace({ search: params.toString() });
   };
 
@@ -51,6 +51,16 @@ function Allbooks() {
     setSelectedCategory(queryParams.get("category") || "bookName");
     setSearchQueryResult(queryParams.get("query") || "");
   }, [queryParams]);
+
+  useEffect(() => {
+    if (!gridReady || isLoading || !gridRef.current?.api) return;
+    const savedState = JSON.parse(sessionStorage.getItem("booksGridState"));
+  
+    if (savedState?.page != null) {
+      gridRef.current.api.paginationGoToPage(savedState.page);
+      sessionStorage.removeItem("booksGridState");
+    }
+  }, [gridReady, isLoading, filteredBooks]);
 
   useEffect(() => {
     const getAllBooks = async () => {
@@ -157,15 +167,33 @@ function Allbooks() {
         </div>
 
         <div className="ag-theme-quartz" style={{ width: "90%", height: "80vh", margin: "auto"}}>
-          <AgGridReact 
+          <AgGridReact
+            suppressNoRowsOverlay
             ref={gridRef}
-            rowData={isLoading ? [] : filteredBooks}
+            rowData={!isLoading ? filteredBooks : null}
             columnDefs={columns} 
             pagination={true} 
             paginationPageSize={20}
             onGridReady={(params) => {
               gridRef.current = params;
               setGridReady(true);
+            }}
+            onRowClicked={(event) => {
+              const bookId = event.data._id;
+              const page = gridRef.current.api.paginationGetCurrentPage();
+              const index = filteredBooks.findIndex((b) => b._id === bookId);
+            
+              sessionStorage.setItem(
+                "booksGridState",
+                JSON.stringify({ page })
+              );
+              history.push({
+                pathname: `/book/${bookId}`,
+                state: {
+                  filteredBooks,
+                  index
+                }
+              });
             }}
           />
         </div>

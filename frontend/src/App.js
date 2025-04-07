@@ -3,6 +3,7 @@ import Signin from './Pages/Signin'
 import { BrowserRouter as Router, Switch, Redirect, Route } from "react-router-dom";
 import MemberDashboard from './Pages/Dashboard/MemberDashboard/MemberDashboard.js';
 import Allbooks from './Pages/Allbooks';
+import BookDetails from './Pages/BookDetails';
 import Header from './Components/Header';
 import AdminDashboard from './Pages/Dashboard/AdminDashboard/AdminDashboard.js';
 import ResetPassword from './Pages/ResetPassword';
@@ -32,6 +33,9 @@ function App() {
           </Route>
           <Route exact path='/books'>
             <Allbooks />
+          </Route>
+          <Route exact path="/book/:id">
+            <BookDetails />
           </Route>
           <Route exact path="/forgot-password"><ResetPassword /></Route>
           <Route exact path="/reset-password"><ResetPassword /></Route>

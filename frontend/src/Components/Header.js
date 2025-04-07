@@ -89,7 +89,7 @@ function Header() {
                             </Link>
                         ) : (
                             // Default to "Sign In" if no user is logged in
-                            <Link to="signin">{t('header.signin')}</Link>
+                            <Link to="/signin">{t('header.signin')}</Link>
                         )}
                     </li>
                     {/* <li className="option">

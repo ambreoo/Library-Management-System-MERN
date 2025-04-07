@@ -16,7 +16,7 @@ function ImageSlider() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    history.push(`/books?query=${encodeURIComponent(query)}&category=${selectedCategory}`);
+    history.push(`/books?category=${selectedCategory}&query=${encodeURIComponent(query)}`);
   };
 
   return (
