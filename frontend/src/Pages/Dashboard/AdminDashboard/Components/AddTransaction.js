@@ -21,6 +21,7 @@ function AddTransaction() {
     const [recentTransactions, setRecentTransactions] = useState([])
     const [allMembers, setAllMembers] = useState([])
     const [allBooks, setAllBooks] = useState([])
+    const [selectedBookDetails, setSelectedBookDetails] = useState(null);
 
     const [fromDate, setFromDate] = useState(null)
     const [fromDateString, setFromDateString] = useState(null)
@@ -145,6 +146,21 @@ function AddTransaction() {
         getMembers()
     }, [API_URL])
 
+    useEffect(() => {
+        const fetchSelectedBook = async () => {
+            if (bookId !== "") {
+                try {
+                    const res = await axios.get(API_URL + "api/books/getbook/" + bookId);
+                    setSelectedBookDetails(res.data);
+                } catch (err) {
+                    console.log("Error fetching book details", err);
+                }
+            } else {
+                setSelectedBookDetails(null);
+            }
+        };
+        fetchSelectedBook();
+    }, [API_URL, bookId]);    
 
     /* Fetching books */
     useEffect(() => {
@@ -237,6 +253,10 @@ function AddTransaction() {
                     <tr>
                         <th>{t('transaction.copies')}</th>
                         <th>{t('transaction.reserved')}</th>
+                    </tr>
+                    <tr>
+                        <td>{selectedBookDetails?.bookCountAvailable ?? "-"}</td>
+                        <td>{selectedBookDetails?.reservedCount ?? "-"}</td>
                     </tr>
                 </table>
 
