@@ -71,10 +71,12 @@ function AddTransaction() {
                         isAdmin: user.isAdmin
                     })
 
-                    await axios.put(API_URL+"api/books/updatebook/"+bookId,{
-                        isAdmin:user.isAdmin,
-                        bookCountAvailable:book_details.data.bookCountAvailable - 1
-                    })
+                    if (book_details.data.bookCountAvailable > 0) {
+                        await axios.put(API_URL + "api/books/updatebook/" + bookId, {
+                          isAdmin: user.isAdmin,
+                          bookCountAvailable: book_details.data.bookCountAvailable - 1
+                        });
+                    }                      
                     await axios.post(API_URL+"api/books/add-to-holdlist/"+bookId, {
                         userId: borrowerId
                     });

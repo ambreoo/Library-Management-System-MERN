@@ -7,28 +7,40 @@ const router = express.Router()
 router.post("/add-transaction", async (req, res) => {
     try {
         if (req.body.isAdmin === true) {
-            const newtransaction = await new BookTransaction({
+            const book = await Book.findById(req.body.bookId);
+    
+            let transactionStatus = "Active";
+            if (
+                req.body.transactionType === "Reserved" &&
+                book.bookCountAvailable > 0
+            ) {
+                transactionStatus = "Ready";
+            }
+    
+            const newTransaction = new BookTransaction({
                 bookId: req.body.bookId,
                 borrowerId: req.body.borrowerId,
                 bookName: req.body.bookName,
                 borrowerName: req.body.borrowerName,
                 transactionType: req.body.transactionType,
                 fromDate: req.body.fromDate,
-                toDate: req.body.toDate
-            })
-            const transaction = await newtransaction.save()
-            const book = Book.findById(req.body.bookId)
-            await book.updateOne({ $push: { transactions: transaction._id } })
-            res.status(200).json(transaction)
+                toDate: req.body.toDate,
+                transactionStatus: transactionStatus,
+            });
+    
+            const transaction = await newTransaction.save();
+    
+            await book.updateOne({ $push: { transactions: transaction._id } });
+    
+            res.status(200).json(transaction);
+        } else {
+            res.status(403).json("You are not allowed to add a Transaction");
         }
-        else if (req.body.isAdmin === false) {
-            res.status(500).json("You are not allowed to add a Transaction")
-        }
+    } catch (err) {
+        console.error("❌ Error in /add-transaction:", err);
+        res.status(504).json("Failed to add transaction");
     }
-    catch (err) {
-        res.status(504).json(err)
-    }
-})
+});  
 
 router.get("/all-transactions", async (req, res) => {
     try {

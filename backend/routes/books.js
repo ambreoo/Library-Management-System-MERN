@@ -35,30 +35,50 @@ router.post("/add-to-holdlist/:bookId", async (req, res) => {
 router.put("/remove-from-holdlist/:bookId", async (req, res) => {
     try {
         const { userId } = req.body;
-
+    
         if (!userId) {
             return res.status(400).json("User ID is required");
         }
-
+    
         const book = await Book.findById(req.params.bookId);
         if (!book) {
             return res.status(404).json("Book not found");
         }
-
-        if (book.bookOnHold.includes(userId)) {
-            await book.updateOne({
-                $pull: { bookOnHold: userId },
-                $inc: { bookCountAvailable: 1 }
-            });
-            return res.status(200).json("User removed and book availability updated");
-        } else {
+    
+        const isUserOnHold = book.bookOnHold.includes(userId);
+    
+        if (!isUserOnHold) {
             return res.status(200).json("User was not on the hold list");
         }
+    
+        // 🔍 Get the transaction for this user and book
+        const transaction = await BookTransaction.findOne({
+            bookId: book._id,
+            borrowerId: userId,
+            transactionType: "Reserved",
+            transactionStatus: { $in: ["Active", "Ready"] }
+        });
+    
+        const isReady = transaction?.transactionStatus === "Ready";
+    
+        const updateFields = {
+            $pull: { bookOnHold: userId },
+        };
+    
+        if (isReady) {
+            updateFields.$inc = { bookCountAvailable: 1 };
+        }
+    
+        await book.updateOne(updateFields);
+    
+        return res.status(200).json(
+            `User removed from hold list` + (isReady ? " and availability updated" : "")
+        );
     } catch (err) {
-        console.log(err);
+        console.error("❌ Error in remove-from-holdlist:", err);
         res.status(504).json("Failed to remove user from hold list");
     }
-});
+  });  
 
 /* Get all books in the db */
 router.get("/allbooks", async (req, res) => {

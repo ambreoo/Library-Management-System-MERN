@@ -10,7 +10,6 @@ import { useTranslation } from 'react-i18next';
 function GetMember() {
 
     const API_URL = process.env.REACT_APP_API_URL
-    // const API_URL = "http://localhost:3001/"
     const { user } = useContext(AuthContext)
     const [allMembersOptions, setAllMembersOptions] = useState(null)
     const [allTransactions, setAllTransactions] = useState([])
@@ -92,22 +91,6 @@ function GetMember() {
 
             /* Getting borrower points alreadt existed */
             const borrowerdata = await axios.get(API_URL+"api/users/getuser/"+borrowerId)
-            // const points = borrowerdata.data.points
-
-            // /* If the number of days after dueDate is greater than zero then decreasing points by 10 else increase by 10*/
-            // if(due > 0){
-            //     await axios.put(API_URL+"api/users/updateuser/"+borrowerId,{
-            //         points:points-10,
-            //         isAdmin: user.isAdmin
-            //     })
-            // }
-            // else if(due<=0){
-            //     await axios.put(API_URL+"api/users/updateuser/"+borrowerId,{
-            //         points:points+10,
-            //         isAdmin: user.isAdmin
-            //     })
-            // }
-
             const book_details = await axios.get(API_URL+"api/books/getbook/"+bookId)
             await axios.put(API_URL+"api/books/updatebook/"+bookId,{
                 isAdmin:user.isAdmin,
@@ -187,17 +170,6 @@ function GetMember() {
                         </div>
                         
                         <div className="user-details-specific">
-                        {/* <div className="specific-right">
-                            <div style={{ display: "flex", flexDirection: "column", flex: "0.5" }}>
-                                <p style={{ fontSize: "20px", display: "flex", alignItems: "center", justifyContent: "center" }}><b>Points</b></p>
-                                <p style={{ fontSize: "25px", fontWeight: "500", display: "flex", alignItems: "center", justifyContent: "center", marginTop: "15px" }}>540</p>
-                            </div>
-                            <div className="dashboard-title-line"></div>
-                            <div style={{ display: "flex", flexDirection: "column", flex: "0.5" }}>
-                                <p style={{ fontSize: "20px", display: "flex", alignItems: "center", justifyContent: "center" }}><b>Rank</b></p>
-                                <p style={{ fontSize: "25px", fontWeight: "500", display: "flex", alignItems: "center", justifyContent: "center", marginTop: "15px" }}>{memberDetails?.points}</p>
-                            </div>
-                        </div> */}
                     </div>
                         <div className="user-info">
                             <p className="user-name">{memberDetails?.userFullName}</p>
@@ -206,57 +178,6 @@ function GetMember() {
                             <p className="user-phone">{memberDetails?.mobileNumber}</p>
                         </div>
                     </div>
-                    {/* <div className="user-details-specific">
-                        <div className="specific-left">
-                            <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                <p style={{ display: "flex", flex: "0.5", flexDirection: "column" }}>
-                                    <span style={{ fontSize: "18px" }}>
-                                        <b>{t('getMember.age')}</b>
-                                    </span>
-                                    <span style={{ fontSize: "16px" }}>
-                                    {memberDetails?.age}
-                                    </span>
-                                </p>
-                                <p style={{ display: "flex", flex: "0.5", flexDirection: "column" }}>
-                                    <span style={{ fontSize: "18px" }}>
-                                        <b>{t('getMember.gender')}</b>
-                                    </span>
-                                    <span style={{ fontSize: "16px" }}>
-                                    {memberDetails?.gender}
-                                    </span>
-                                </p>
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "space-between", marginTop: "30px" }}>
-                                <p style={{ display: "flex", flex: "0.5", flexDirection: "column" }}>
-                                    <span style={{ fontSize: "18px" }}>
-                                        <b>{t('getMember.dob')}</b>
-                                    </span>
-                                    <span style={{ fontSize: "16px" }}>
-                                        {memberDetails?.dob}
-                                    </span>
-                                </p>
-                                <p style={{ display: "flex", flex: "0.5", flexDirection: "column" }}>
-                                    <span style={{ fontSize: "18px" }}>
-                                        <b>{t('getMember.address')}</b>
-                                    </span>
-                                    <span style={{ fontSize: "16px" }}>
-                                        {memberDetails?.address}
-                                    </span>
-                                </p>
-                            </div>
-                        </div>
-                        <div className="specific-right">
-                            <div style={{ display: "flex", flexDirection: "column", flex: "0.5" }}>
-                                <p style={{ fontSize: "20px", display: "flex", alignItems: "center", justifyContent: "center" }}><b>Points</b></p>
-                                <p style={{ fontSize: "25px", fontWeight: "500", display: "flex", alignItems: "center", justifyContent: "center", marginTop: "15px" }}>540</p>
-                            </div>
-                            <div className="dashboard-title-line"></div>
-                            <div style={{ display: "flex", flexDirection: "column", flex: "0.5" }}>
-                                <p style={{ fontSize: "20px", display: "flex", alignItems: "center", justifyContent: "center" }}><b>Rank</b></p>
-                                <p style={{ fontSize: "25px", fontWeight: "500", display: "flex", alignItems: "center", justifyContent: "center", marginTop: "15px" }}>{memberDetails?.points}</p>
-                            </div>
-                        </div>
-                    </div> */}
                 </div>
 
                 <div className="member-activebooks-content" id="activebooks@member">
@@ -268,7 +189,7 @@ function GetMember() {
                             <th>{t('getMember.fromDate')}</th>
                             <th>{t('getMember.toDate')}</th>
                             {/* <th>Fine</th> */}
-                            <th></th>
+                            <th>Actions</th>
                         </tr>
                         {
                             memberDetails?.activeTransactions?.filter((data) => {
@@ -281,7 +202,6 @@ function GetMember() {
                                         <td>{data.fromDate}</td>
                                         <td>{data.toDate}</td>
                                         <td><button onClick={()=>{returnBook(data._id,data.borrowerId,data.bookId,(Math.floor(( Date.parse(moment(new Date()).format("MM/DD/YYYY")) - Date.parse(data.toDate) ) / 86400000)))}}>{t('getMember.return')}</button></td>
-                                        {/* <td>{(Math.floor((Date.parse(moment(new Date()).format("MM/DD/YYYY")) - Date.parse(data.toDate)) / 86400000)) <= 0 ? 0 : (Math.floor((Date.parse(moment(new Date()).format("MM/DD/YYYY")) - Date.parse(data.toDate)) / 86400000)) * 10}</td> */}
                                     </tr>
                                 )
                             })
@@ -297,7 +217,8 @@ function GetMember() {
                             <th>{t('getMember.bookName')}</th>
                             <th>{t('getMember.fromDate')}</th>
                             <th>{t('getMember.toDate')}</th>
-                            <th></th>
+                            <th>Status</th>
+                            <th>Actions</th>
                         </tr>
                         {
                             memberDetails?.activeTransactions?.filter((data) => {
@@ -309,6 +230,7 @@ function GetMember() {
                                         <td>{data.bookName}</td>
                                         <td>{data.fromDate}</td>
                                         <td>{data.toDate}</td>
+                                        <td>Ready</td>
                                         <td><button onClick={()=>{convertToIssue(data._id)}}>{t('getMember.convert')}</button></td>
                                     </tr>
                                 )
