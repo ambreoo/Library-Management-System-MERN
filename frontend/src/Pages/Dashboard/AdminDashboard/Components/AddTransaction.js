@@ -212,12 +212,12 @@ function AddTransaction() {
                     <tr>
                         <td>{borrowerDetails.userFullName}</td>
                         <td>{borrowerDetails.activeTransactions?.filter((data) => {
-                            return data.transactionType === "Issued" && data.transactionStatus === "Active"
+                            return data.transactionType === "Issued" && (data.transactionStatus === "Active" || data.transactionStatus === "Ready")
                         }).length
                         }
                         </td>
                         <td>{borrowerDetails.activeTransactions?.filter((data) => {
-                            return data.transactionType === "Reserved" && data.transactionStatus === "Active"
+                            return data.transactionType === "Reserved" && (data.transactionStatus === "Active" || data.transactionStatus === "Ready")
                         }).length
                         }
                         </td>
@@ -233,7 +233,7 @@ function AddTransaction() {
                         {/* <th>Fine</th> */}
                     </tr>
                     {
-                        borrowerDetails.activeTransactions?.filter((data) => { return data.transactionStatus === "Active" }).map((data, index) => {
+                        borrowerDetails.activeTransactions?.filter((data) => { return data.transactionStatus === "Active" || data.transactionStatus === "Ready" }).map((data, index) => {
                             return (
                                 <tr key={index}>
                                     <td>{data.bookName}</td>

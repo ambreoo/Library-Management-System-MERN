@@ -57,31 +57,26 @@ router.put("/remove-from-holdlist/:bookId", async (req, res) => {
             borrowerId: userId,
             transactionType: "Reserved",
             transactionStatus: { $in: ["Active", "Ready"] }
-          }).sort({ createdAt: -1 });
-        
-        const isReady = transaction?.transactionStatus === "Ready";
-        console.log("isReady:", isReady);
+        });
     
         const updateFields = {
             $pull: { bookOnHold: userId },
         };
     
-        if (isReady) {
+        if (transaction?.transactionStatus === "Ready") {
             updateFields.$inc = { bookCountAvailable: 1 };
-            console.log("Incrementing bookCountAvailable by 1");
         }
     
-        await Book.updateOne(
-            { _id: req.params.bookId },
+        const updateResult = await Book.updateOne(
+            { _id: book._id },
             updateFields
         );
-    
         return res.status(200).json(
-            `User removed from hold list` + (isReady ? " and availability updated" : "")
+            `User removed from hold list${transaction?.transactionStatus === "Ready" ? " and availability updated" : ""}`
         );
     } catch (err) {
         console.error("❌ Error in remove-from-holdlist:", err);
-        res.status(504).json("Failed to remove user from hold list");
+        return res.status(504).json("Failed to remove user from hold list");
     }
   });  
 
