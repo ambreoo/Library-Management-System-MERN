@@ -233,19 +233,19 @@ function MemberDashboard() {
                         <tr key={index}>
                           <td>{index + 1}</td>
                           <td>{data.bookName}</td>
-                          <td>{userIndex + 1}</td>
+                          <td>{data.transactionStatus === "Ready" ? "Ready" : userIndex + 1}</td>
                           <td>
                           <button
                             className="remove-hold-button"
                             onClick={async () => {
                               try {
+                                await axios.put(API_URL + `api/books/remove-from-holdlist/${data.bookId}`, {
+                                  userId: memberDetails._id,
+                                });
                                 await axios.delete(API_URL + `api/transactions/remove-transaction/${data._id}`, {
                                   data: {
                                     userId: memberDetails._id,
                                   }
-                                });
-                                await axios.put(API_URL + `api/books/remove-from-holdlist/${data.bookId}`, {
-                                  userId: memberDetails._id,
                                 });
                                 await axios.put(API_URL + `api/users/cancel-transaction/${memberDetails._id}`, {
                                   transactionId: data._id

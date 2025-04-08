@@ -230,7 +230,7 @@ function GetMember() {
                                         <td>{data.bookName}</td>
                                         <td>{data.fromDate}</td>
                                         <td>{data.toDate}</td>
-                                        <td>Ready</td>
+                                        <td>{data.transactionStatus}</td>
                                         <td><button onClick={()=>{convertToIssue(data._id)}}>{t('getMember.convert')}</button></td>
                                     </tr>
                                 )
