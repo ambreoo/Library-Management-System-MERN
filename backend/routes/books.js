@@ -45,8 +45,15 @@ router.put("/remove-from-holdlist/:bookId", async (req, res) => {
             return res.status(404).json("Book not found");
         }
 
-        await book.updateOne({ $pull: { bookOnHold: userId } });
-        res.status(200).json("User removed from book hold list");
+        if (book.bookOnHold.includes(userId)) {
+            await book.updateOne({
+                $pull: { bookOnHold: userId },
+                $inc: { bookCountAvailable: 1 }
+            });
+            return res.status(200).json("User removed and book availability updated");
+        } else {
+            return res.status(200).json("User was not on the hold list");
+        }
     } catch (err) {
         console.log(err);
         res.status(504).json("Failed to remove user from hold list");

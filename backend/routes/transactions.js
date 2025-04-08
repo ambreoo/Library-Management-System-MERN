@@ -55,19 +55,24 @@ router.put("/update-transaction/:id", async (req, res) => {
 })
 
 router.delete("/remove-transaction/:id", async (req, res) => {
-    if (req.body.isAdmin) {
-        try {
-            const data = await BookTransaction.findByIdAndDelete(req.params.id);
-            const book = Book.findById(data.bookId)
-            console.log(book)
-            await book.updateOne({ $pull: { transactions: req.params.id } })
-            res.status(200).json("Transaction deleted successfully");
-        } catch (err) {
-            return res.status(504).json(err);
-        }
-    } else {
-        return res.status(403).json("You dont have permission to delete a book!");
+    try {
+        const transaction = await BookTransaction.findByIdAndDelete(req.params.id);
+        if (!transaction) return res.status(404).json("Transaction not found");
+
+        await User.findByIdAndUpdate(transaction.borrowerId, {
+            $pull: { activeTransactions: req.params.id }
+        });
+
+        await Book.findByIdAndUpdate(transaction.bookId, {
+            $pull: { transactions: req.params.id }
+        });
+
+        res.status(200).json("Transaction deleted successfully");
+    } catch (err) {
+        console.error(err);
+        res.status(504).json(err);
     }
-})
+});
+
 
 export default router

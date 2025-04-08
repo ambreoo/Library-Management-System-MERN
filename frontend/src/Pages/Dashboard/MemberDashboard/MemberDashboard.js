@@ -22,9 +22,33 @@ function MemberDashboard() {
   const [sidebar, setSidebar] = useState(false);
 
   const API_URL = process.env.REACT_APP_API_URL;
-  // const API_URL = "http://localhost:3001/"
   const { user } = useContext(AuthContext);
   const [memberDetails, setMemberDetails] = useState(null);
+  const [booksOnHoldMap, setBooksOnHoldMap] = useState({});
+
+  useEffect(() => {
+    const fetchBooksOnHold = async () => {
+      if (!memberDetails?.activeTransactions) return;
+  
+      const reservedBooks = memberDetails.activeTransactions.filter(
+        (tx) => tx.transactionType === "Reserved"
+      );
+  
+      const newMap = {};
+      for (const tx of reservedBooks) {
+        try {
+          const res = await axios.get(API_URL + "api/books/getbook/" + tx.bookId);
+          newMap[tx.bookId] = res.data.bookOnHold;
+        } catch (err) {
+          console.error("Error fetching bookOnHold for", tx.bookId);
+        }
+      }
+  
+      setBooksOnHoldMap(newMap);
+    };
+  
+    fetchBooksOnHold();
+  }, [memberDetails, API_URL]);  
 
   useEffect(() => {
     const getMemberDetails = async () => {
@@ -81,42 +105,6 @@ function MemberDashboard() {
               >
                 <AccountCircleIcon className="dashboard-option-icon" /> {t('dashboard.profile')}
               </a>
-              {/* <a
-                href="#activebooks@member"
-                className={`dashboard-option ${
-                  active === "active" ? "clicked" : ""
-                }`}
-                onClick={() => {
-                  setActive("active");
-                  setSidebar(false);
-                }}
-              >
-                <LocalLibraryIcon className="dashboard-option-icon" /> Active
-              </a> */}
-              {/* <a
-                href="#reservedbook@member"
-                className={`dashboard-option ${
-                  active === "reserved" ? "clicked" : ""
-                }`}
-                onClick={() => {
-                  setActive("reserved");
-                  setSidebar(false);
-                }}
-              >
-                <BookIcon className="dashboard-option-icon" /> Reserved
-              </a> */}
-              {/* <a
-                href="#history@member"
-                className={`dashboard-option ${
-                  active === "history" ? "clicked" : ""
-                }`}
-                onClick={() => {
-                  setActive("history");
-                  setSidebar(false);
-                }}
-              >
-                <HistoryIcon className="dashboard-option-icon" /> History
-              </a> */}
               <a
                 href="#profile@member"
                 className={`dashboard-option ${
@@ -191,81 +179,6 @@ function MemberDashboard() {
                   </div>
                 </div>
                 <div className="user-details-specific">
-                  {/* <div className="specific-left">
-                    <div className="specific-left-top">
-                      <p className="specific-left-topic">
-                        <span style={{ fontSize: "18px" }}>
-                          <b>{t('getMember.age')}</b>
-                        </span>
-                        <span style={{ fontSize: "16px" }}>
-                          {memberDetails?.age}
-                        </span>
-                      </p>
-                      <p className="specific-left-topic">
-                        <span style={{ fontSize: "18px" }}>
-                          <b>{t('getMember.gender')}</b>
-                        </span>
-                        <span style={{ fontSize: "16px" }}>
-                          {memberDetails?.gender}
-                        </span>
-                      </p>
-                    </div>
-                    <div className="specific-left-bottom">
-                      <p className="specific-left-topic">
-                        <span style={{ fontSize: "18px" }}>
-                          <b>{t('getMember.dob')}</b>
-                        </span>
-                        <span style={{ fontSize: "16px" }}>
-                          {memberDetails?.dob}
-                        </span>
-                      </p>
-                      <p className="specific-left-topic">
-                        <span style={{ fontSize: "18px" }}>
-                          <b>{t('getMember.address')}</b>
-                        </span>
-                        <span style={{ fontSize: "16px" }}>
-                          {memberDetails?.address}
-                        </span>
-                      </p>
-                    </div>
-                  </div> */}
-                  {/* <div className="specific-right">
-                    <div className="specific-right-top">
-                      <p className="specific-right-topic">
-                        <b>Points</b>
-                      </p>
-                      <p
-                        style={{
-                          fontSize: "25px",
-                          fontWeight: "500",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          marginTop: "15px",
-                        }}
-                      >
-                        540
-                      </p>
-                    </div>
-                    <div className="dashboard-title-line"></div>
-                    <div className="specific-right-bottom">
-                      <p className="specific-right-topic">
-                        <b>Rank</b>
-                      </p>
-                      <p
-                        style={{
-                          fontSize: "25px",
-                          fontWeight: "500",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          marginTop: "15px",
-                        }}
-                      >
-                        {memberDetails?.points}
-                      </p>
-                    </div>
-                  </div> */}
                 </div>
               </div>
 
@@ -290,21 +203,6 @@ function MemberDashboard() {
                           <td>{data.bookName}</td>
                           <td>{data.fromDate}</td>
                           <td>{data.toDate}</td>
-                          {/* <td>
-                            {Math.floor(
-                              (Date.parse(moment(new Date()).format("MM/DD/YYYY")) -
-                                Date.parse(data.toDate)) /
-                                86400000
-                            ) <= 0
-                              ? 0
-                              : Math.floor(
-                                  (Date.parse(
-                                    moment(new Date()).format("MM/DD/YYYY")
-                                  ) -
-                                    Date.parse(data.toDate)) /
-                                    86400000
-                                ) * 10}
-                          </td> */}
                         </tr>
                       );
                     })}
@@ -320,20 +218,56 @@ function MemberDashboard() {
                   <tr>
                     <th>S.No</th>
                     <th>{t('getMember.bookName')}</th>
-                    <th>{t('getMember.fromDate')}</th>
-                    <th>{t('getMember.toDate')}</th>
+                    {/* <th>{t('getMember.fromDate')}</th>
+                    <th>{t('getMember.toDate')}</th> */}
+                    <th>No. On Hold</th>
+                    <th>Action</th>
                   </tr>
                   {memberDetails?.activeTransactions
-                    ?.filter((data) => {
-                      return data.transactionType === "Reserved";
-                    })
+                    ?.filter((data) => data.transactionType === "Reserved")
                     .map((data, index) => {
+                      const holdList = booksOnHoldMap[data.bookId] || [];
+                      const userIndex = holdList.findIndex((id) => id === memberDetails._id);
+
                       return (
                         <tr key={index}>
                           <td>{index + 1}</td>
                           <td>{data.bookName}</td>
-                          <td>{data.fromDate}</td>
-                          <td>{data.toDate}</td>
+                          <td>{userIndex + 1}</td>
+                          <td>
+                          <button
+                            className="remove-hold-button"
+                            onClick={async () => {
+                              try {
+                                await axios.delete(API_URL + `api/transactions/remove-transaction/${data._id}`, {
+                                  data: {
+                                    userId: memberDetails._id
+                                  }
+                                });                                
+                                // Update memberDetails to remove the canceled transaction
+                                setMemberDetails((prev) => ({
+                                  ...prev,
+                                  activeTransactions: prev.activeTransactions.filter(
+                                    (tx) => tx._id !== data._id
+                                  ),
+                                }));
+
+                                // Optionally update waitlist too
+                                const updatedBook = await axios.get(API_URL + "api/books/getbook/" + data.bookId);
+                                setBooksOnHoldMap((prev) => ({
+                                  ...prev,
+                                  [data.bookId]: updatedBook.data.bookOnHold,
+                                }));
+
+                                alert("Reservation canceled successfully ✅");
+                              } catch (err) {
+                                console.error("Failed to cancel reservation", err);
+                              }
+                            }}
+                          >
+                            Remove
+                          </button>
+                          </td>
                         </tr>
                       );
                     })}
