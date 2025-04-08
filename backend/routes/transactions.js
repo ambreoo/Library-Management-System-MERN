@@ -59,14 +59,6 @@ router.delete("/remove-transaction/:id", async (req, res) => {
         const transaction = await BookTransaction.findByIdAndDelete(req.params.id);
         if (!transaction) return res.status(404).json("Transaction not found");
 
-        await User.findByIdAndUpdate(transaction.borrowerId, {
-            $pull: { activeTransactions: req.params.id }
-        });
-
-        await Book.findByIdAndUpdate(transaction.bookId, {
-            $pull: { transactions: req.params.id }
-        });
-
         res.status(200).json("Transaction deleted successfully");
     } catch (err) {
         console.error(err);

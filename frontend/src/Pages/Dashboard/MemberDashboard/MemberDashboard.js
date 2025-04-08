@@ -241,32 +241,19 @@ function MemberDashboard() {
                               try {
                                 await axios.delete(API_URL + `api/transactions/remove-transaction/${data._id}`, {
                                   data: {
-                                    userId: memberDetails._id
+                                    userId: memberDetails._id,
                                   }
-                                });                                
-                                // Update memberDetails to remove the canceled transaction
-                                setMemberDetails((prev) => ({
-                                  ...prev,
-                                  activeTransactions: prev.activeTransactions.filter(
-                                    (tx) => tx._id !== data._id
-                                  ),
-                                }));
-
-                                // Optionally update waitlist too
-                                const updatedBook = await axios.get(API_URL + "api/books/getbook/" + data.bookId);
-                                setBooksOnHoldMap((prev) => ({
-                                  ...prev,
-                                  [data.bookId]: updatedBook.data.bookOnHold,
-                                }));
-
+                                });
                                 alert("Reservation canceled successfully ✅");
                               } catch (err) {
                                 console.error("Failed to cancel reservation", err);
+                                alert("Failed to cancel reservation ❌");
                               }
                             }}
                           >
                             Remove
                           </button>
+
                           </td>
                         </tr>
                       );
