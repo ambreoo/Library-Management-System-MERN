@@ -90,24 +90,34 @@ router.put("/cancel-transaction/:userId", async (req, res) => {
     try {
       const { transactionId } = req.body;
   
+      console.log("🟢 Cancel Transaction Hit");
+      console.log("➡️ userId:", req.params.userId);
+      console.log("➡️ transactionId:", transactionId);
+  
       if (!transactionId) {
+        console.log("❌ Missing transactionId");
         return res.status(400).json("Transaction ID is required");
       }
   
-      await User.findByIdAndUpdate(req.params.userId, {
-        $pull: { activeTransactions: transactionId }
-      });      
+      const updatedUser = await User.findByIdAndUpdate(
+        req.params.userId,
+        { $pull: { activeTransactions: transactionId } },
+        { new: true }
+      );
   
-      if (!user) {
+      if (!updatedUser) {
+        console.log("❌ User not found");
         return res.status(404).json("User not found");
       }
   
+      console.log("✅ Transaction removed from user");
       res.status(200).json("Transaction removed from user successfully");
     } catch (err) {
-      console.error("Error removing transaction from user:", err);
-      res.status(504).json("Failed to remove transaction from user");
+        console.error("❌ Error in /cancel-transaction:", err);
+        res.status(504).json("Failed to cancel transaction");
     }
-  });  
+  });
+  
 
 /* Delete user by id */
 router.delete("/deleteuser/:id", async (req, res) => {
