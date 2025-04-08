@@ -68,9 +68,13 @@ router.put("/remove-from-holdlist/:bookId", async (req, res) => {
     
         if (isReady) {
             updateFields.$inc = { bookCountAvailable: 1 };
+            console.log("Incrementing bookCountAvailable by 1");
         }
     
-        await book.updateOne(updateFields);
+        await Book.updateOne(
+            { _id: req.params.bookId },
+            updateFields
+        );
     
         return res.status(200).json(
             `User removed from hold list` + (isReady ? " and availability updated" : "")
