@@ -91,7 +91,6 @@ function GetMember() {
     const convertToIssue = async (transactionId, fromDate, toDate, borrowerId, bookId) => {
         try{
             await axios.put(API_URL+"api/transactions/update-transaction/"+transactionId,{
-                transactionType:"Issued",
                 fromDate: moment(fromDate).format("MM/DD/YYYY"),
                 toDate: moment(toDate).format("MM/DD/YYYY"),
                 isAdmin:user.isAdmin
@@ -99,6 +98,10 @@ function GetMember() {
             await axios.put(API_URL + `api/books/remove-from-holdlist/${bookId}`, {
                 userId: borrowerId
             });
+            await axios.put(API_URL+"api/transactions/update-transaction/"+transactionId,{
+                transactionType:"Issued",
+                isAdmin:user.isAdmin
+            })
             setExecutionStatus("Completed");
             alert("Book issued succesfully 🎆")
         }
