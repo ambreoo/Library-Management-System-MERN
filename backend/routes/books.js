@@ -58,6 +58,10 @@ router.put("/remove-from-holdlist/:bookId", async (req, res) => {
             transactionType: "Reserved",
             transactionStatus: { $in: ["Active", "Ready"] }
         });
+
+        if (!transaction) {
+            return res.status(404).json("Transaction not found");
+        }
           
         const update = {
             $pull: {
@@ -67,10 +71,8 @@ router.put("/remove-from-holdlist/:bookId", async (req, res) => {
         };
         
         // user check out, otherwise is a drop from waitlist
-        if (transaction.transactionStatus === "Ready") {
-            if (transaction.toDate === null) {
-                update.$inc = { bookCountAvailable: 1 };
-            }
+        if (transaction.transactionStatus === "Ready" && !transaction.toDate) {
+            update.$inc = { bookCountAvailable: 1 };
         }
         await Book.findByIdAndUpdate(book._id, update);
 
