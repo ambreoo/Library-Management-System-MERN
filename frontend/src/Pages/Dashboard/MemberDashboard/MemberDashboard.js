@@ -242,13 +242,13 @@ function MemberDashboard() {
                                 await axios.put(API_URL + `api/books/remove-from-holdlist/${data.bookId}`, {
                                   userId: memberDetails._id,
                                 });
+                                await axios.put(API_URL + `api/users/cancel-transaction/${memberDetails._id}`, {
+                                  transactionId: data._id
+                                });
                                 await axios.delete(API_URL + `api/transactions/remove-transaction/${data._id}`, {
                                   data: {
                                     userId: memberDetails._id,
                                   }
-                                });
-                                await axios.put(API_URL + `api/users/cancel-transaction/${memberDetails._id}`, {
-                                  transactionId: data._id
                                 });
                                 setMemberDetails((prev) => ({
                                   ...prev,

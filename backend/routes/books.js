@@ -59,16 +59,17 @@ router.put("/remove-from-holdlist/:bookId", async (req, res) => {
             transactionStatus: { $in: ["Active", "Ready"] }
         });
           
-        if (transaction?.transactionStatus === "Ready") {
-            await Book.findByIdAndUpdate(book._id, {
-                $pull: { bookOnHold: userId },
-                $inc: { bookCountAvailable: 1 }
-        });
-        } else {
-            await Book.findByIdAndUpdate(book._id, {
-                $pull: { bookOnHold: userId }
-            });
+        const update = {
+            $pull: {
+              bookOnHold: userId,
+              transactions: transaction._id
+            }
+        };
+        
+        if (transaction.transactionStatus === "Ready") {
+            update.$inc = { bookCountAvailable: 1 };
         }
+        await Book.findByIdAndUpdate(book._id, update);
 
         return res.status(200).json(
             `User removed from hold list${transaction?.transactionStatus === "Ready" ? " and availability updated" : ""}`
