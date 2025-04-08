@@ -52,15 +52,15 @@ router.put("/remove-from-holdlist/:bookId", async (req, res) => {
             return res.status(200).json("User was not on the hold list");
         }
     
-        // 🔍 Get the transaction for this user and book
         const transaction = await BookTransaction.findOne({
             bookId: book._id,
             borrowerId: userId,
             transactionType: "Reserved",
             transactionStatus: { $in: ["Active", "Ready"] }
-        });
-    
+          }).sort({ createdAt: -1 });
+        
         const isReady = transaction?.transactionStatus === "Ready";
+        console.log("isReady:", isReady);
     
         const updateFields = {
             $pull: { bookOnHold: userId },
