@@ -244,6 +244,13 @@ function MemberDashboard() {
                                     userId: memberDetails._id,
                                   }
                                 });
+                                await axios.put(API_URL + `api/books/remove-from-holdlist/${data.bookId}`, {
+                                  userId: memberDetails._id,
+                                });
+                                await axios.put(API_URL + `api/users/cancel-transaction/${memberDetails._id}`, {
+                                  transactionId: data._id
+                                });                                
+                                
                                 alert("Reservation canceled successfully ✅");
                               } catch (err) {
                                 console.error("Failed to cancel reservation", err);
@@ -253,7 +260,6 @@ function MemberDashboard() {
                           >
                             Remove
                           </button>
-
                           </td>
                         </tr>
                       );

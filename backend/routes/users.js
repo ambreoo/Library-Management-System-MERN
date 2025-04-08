@@ -86,6 +86,29 @@ router.put("/:id/move-to-prevtransactions", async (req,res)=>{
     }
 })
 
+router.put("/cancel-transaction/:userId", async (req, res) => {
+    try {
+      const { transactionId } = req.body;
+  
+      if (!transactionId) {
+        return res.status(400).json("Transaction ID is required");
+      }
+  
+      await User.findByIdAndUpdate(req.params.userId, {
+        $pull: { activeTransactions: transactionId }
+      });      
+  
+      if (!user) {
+        return res.status(404).json("User not found");
+      }
+  
+      res.status(200).json("Transaction removed from user successfully");
+    } catch (err) {
+      console.error("Error removing transaction from user:", err);
+      res.status(504).json("Failed to remove transaction from user");
+    }
+  });  
+
 /* Delete user by id */
 router.delete("/deleteuser/:id", async (req, res) => {
     if (req.body.userId === req.params.id || req.body.isAdmin) {
