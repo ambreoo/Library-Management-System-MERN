@@ -5,6 +5,7 @@ import { Dropdown } from 'semantic-ui-react'
 import '../../MemberDashboard/MemberDashboard.css'
 import { AuthContext } from '../../../../Context/AuthContext'
 import moment from "moment"
+import DatePicker from "react-datepicker";
 import { useTranslation } from 'react-i18next';
 
 function GetMember() {
@@ -17,6 +18,8 @@ function GetMember() {
     const [memberId, setMemberId] = useState(null)
     const [memberDetails, setMemberDetails] = useState(null)
     const { t } = useTranslation();
+    const [allBooks, setAllBooks] = useState([]);
+    const [datePickers, setDatePickers] = useState({});
 
     //Fetch Members
     useEffect(() => {
@@ -63,22 +66,46 @@ function GetMember() {
             }
         }
         getAllTransactions()
+
+        const fetchAllBooks = async () => {
+            try {
+                const res = await axios.get(API_URL + "api/books/allbooks");
+                setAllBooks(res.data);
+            } catch (err) {
+                console.error("Error fetching all books", err);
+            }
+        };
+        fetchAllBooks();
     }, [API_URL, memberId, ExecutionStatus])
 
-    const convertToIssue = async (transactionId) => {
+    const handleDateChange = (id, field, value) => {
+        setDatePickers(prev => ({
+            ...prev,
+            [id]: {
+                ...prev[id],
+                [field]: value
+            }
+        }));
+    };
+
+    const convertToIssue = async (transactionId, fromDate, toDate, borrowerId, bookId) => {
         try{
             await axios.put(API_URL+"api/transactions/update-transaction/"+transactionId,{
                 transactionType:"Issued",
+                fromDate: moment(fromDate).format("MM/DD/YYYY"),
+                toDate: moment(toDate).format("MM/DD/YYYY"),
                 isAdmin:user.isAdmin
             })
+            await axios.put(API_URL + `api/books/remove-from-holdlist/${bookId}`, {
+                userId: borrowerId
+            });
             setExecutionStatus("Completed");
             alert("Book issued succesfully 🎆")
         }
         catch(err){
             console.log(err)
         }
-    }
-
+    } 
 
     const returnBook = async (transactionId,borrowerId,bookId,due) =>{
         try{
@@ -189,7 +216,7 @@ function GetMember() {
                             <th>{t('getMember.fromDate')}</th>
                             <th>{t('getMember.toDate')}</th>
                             {/* <th>Fine</th> */}
-                            <th>Actions</th>
+                            <th>Action</th>
                         </tr>
                         {
                             memberDetails?.activeTransactions?.filter((data) => {
@@ -218,20 +245,69 @@ function GetMember() {
                             <th>{t('getMember.fromDate')}</th>
                             <th>{t('getMember.toDate')}</th>
                             <th>Status</th>
-                            <th>Actions</th>
+                            <th>Action</th>
                         </tr>
                         {
                             memberDetails?.activeTransactions?.filter((data) => {
                                 return data.transactionType === "Reserved"
                             }).map((data, index) => {
+                                const fromDate = datePickers[data._id]?.fromDate || null;
+                                const toDate = datePickers[data._id]?.toDate || null;
                                 return (
                                     <tr key={index}>
                                         <td>{index+1}</td>
                                         <td>{data.bookName}</td>
-                                        <td>{data.fromDate}</td>
-                                        <td>{data.toDate}</td>
-                                        <td>{data.transactionStatus}</td>
-                                        <td><button onClick={()=>{convertToIssue(data._id)}}>{t('getMember.convert')}</button></td>
+                                        <td>
+                                            {data.transactionStatus === "Ready" ? (
+                                                <DatePicker
+                                                selected={fromDate}
+                                                onChange={(date) => handleDateChange(data._id, "fromDate", date)}
+                                                dateFormat="MM/dd/yyyy"
+                                                placeholderText="Select start"
+                                                />
+                                            ) : (
+                                                data.fromDate || "-"
+                                            )}
+                                            </td>
+                                            <td>
+                                            {data.transactionStatus === "Ready" ? (
+                                                <DatePicker
+                                                selected={toDate}
+                                                onChange={(date) => handleDateChange(data._id, "toDate", date)}
+                                                dateFormat="MM/dd/yyyy"
+                                                placeholderText="Select end"
+                                                minDate={fromDate}
+                                                />
+                                            ) : (
+                                                data.toDate || "-"
+                                            )}
+                                        </td>
+                                        <td>{data.transactionStatus === "Ready" ? "Ready" : allBooks.find((b) => b._id === data.bookId)?.bookOnHold.findIndex((id) => id === memberDetails._id) + 1 || "-"}</td>
+                                        <td>
+                                            {
+                                                data.transactionStatus === "Ready" ? (
+                                                <button onClick={() => convertToIssue(data._id, fromDate, toDate, data.borrowerId, data.bookId)} disabled={!fromDate || !toDate}>{t('getMember.convert')}</button>
+                                                ) : (
+                                                <button onClick={async () => {
+                                                    try {
+                                                        await axios.put(API_URL + `api/books/remove-from-holdlist/${data.bookId}`, {
+                                                            userId: data.borrowerId
+                                                        });
+                                                        await axios.delete(API_URL + `api/transactions/remove-transaction/${data._id}`, {
+                                                            data: { userId: data.borrowerId }
+                                                        });
+                                                        await axios.put(API_URL + `api/users/cancel-transaction/${data.borrowerId}`, {
+                                                            transactionId: data._id
+                                                        });
+                                                        setExecutionStatus("Completed");
+                                                        alert("Reservation removed ✅");
+                                                    } catch (err) {
+                                                        console.error("Failed to remove reservation", err);
+                                                    }
+                                                }}>Remove</button>
+                                                )
+                                            }
+                                            </td>
                                     </tr>
                                 )
                             })
