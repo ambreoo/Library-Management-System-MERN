@@ -66,7 +66,7 @@ router.put("/remove-from-holdlist/:bookId", async (req, res) => {
             }
         };
         
-        if (transaction.transactionStatus === "Ready" (!transaction.fromDate || !transaction.toDate)) {
+        if (transaction.transactionStatus === "Ready" && (!transaction.fromDate || !transaction.toDate)) {
             update.$inc = { bookCountAvailable: 1 };
         }
         await Book.findByIdAndUpdate(book._id, update);
