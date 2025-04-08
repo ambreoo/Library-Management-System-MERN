@@ -40,7 +40,12 @@ function AddTransaction() {
     const addTransaction = async (e) => {
         e.preventDefault()
         setIsLoading(true)
-        if (bookId !== "" && borrowerId !== "" && transactionType !== "" && fromDate !== null && toDate !== null) {
+        if (bookId !== "" && borrowerId !== "" && transactionType !== "") {
+            if (transactionType === "Issued" && (fromDate === null || toDate === null)) {
+                alert("Please select from and to dates for issuing a book.");
+                setIsLoading(false);
+                return;
+            }
             const borrower_details = await axios.get(API_URL + "api/users/getuser/" + borrowerId)
             const book_details = await axios.get(API_URL + "api/books/getbook/" + bookId)
             
@@ -52,8 +57,8 @@ function AddTransaction() {
                     borrowerName: borrower_details.data.userFullName,
                     bookName: book_details.data.bookName,
                     transactionType: transactionType,
-                    fromDate: fromDateString,
-                    toDate: toDateString,
+                    fromDate: transactionType === "Issued" ? fromDateString : null,
+                    toDate: transactionType === "Issued" ? toDateString : null,
                     isAdmin: user.isAdmin
                 }
                 try {
@@ -70,7 +75,10 @@ function AddTransaction() {
                         isAdmin:user.isAdmin,
                         bookCountAvailable:book_details.data.bookCountAvailable - 1
                     })
-
+                    await axios.post(API_URL+"api/books/add-to-holdlist/"+bookId, {
+                        userId: borrowerId
+                    });
+                    
                     setRecentTransactions([response.data, ...recentTransactions])
                     setBorrowerId("")
                     setBookId("")
@@ -228,8 +236,8 @@ function AddTransaction() {
                                 <tr key={index}>
                                     <td>{data.bookName}</td>
                                     <td>{data.transactionType}</td>
-                                    <td>{data.fromDate}</td>
-                                    <td>{data.toDate}</td>
+                                    <td>{data.fromDate ? data.fromDate : "-"}</td>
+                                    <td>{data.toDate ? data.toDate : "-"}</td>
                                     {/* <td>{(Math.floor((Date.parse(moment(new Date()).format("MM/DD/YYYY")) - Date.parse(data.toDate)) / 86400000)) <= 0 ? 0 : (Math.floor((Date.parse(moment(new Date()).format("MM/DD/YYYY")) - Date.parse(data.toDate)) / 86400000)) * 10}</td> */}
                                 </tr>
                             )
@@ -256,7 +264,7 @@ function AddTransaction() {
                     </tr>
                     <tr>
                         <td>{selectedBookDetails?.bookCountAvailable ?? "-"}</td>
-                        <td>{selectedBookDetails?.reservedCount ?? "-"}</td>
+                        <td>{selectedBookDetails?.bookOnHold.length ?? "-"}</td>
                     </tr>
                 </table>
 
@@ -273,26 +281,31 @@ function AddTransaction() {
                 </div>
                 <br />
 
-                <label className="transaction-form-label" htmlFor="from-date">{t('transaction.fromDate')}<span className="required-field">*</span></label><br />
-                <DatePicker
-                    className="date-picker"
-                    placeholderText="MM/DD/YYYY"
-                    selected={fromDate}
-                    onChange={(date) => { setFromDate(date); setFromDateString(moment(date).format("MM/DD/YYYY")) }}
-                    minDate={new Date()}
-                    dateFormat="MM/dd/yyyy"
-                /><br />
+                {
+                transactionType === "Issued" && (
+                    <>
+                    <label className="transaction-form-label" htmlFor="from-date">{t('transaction.fromDate')}<span className="required-field">*</span></label><br />
+                    <DatePicker
+                        className="date-picker"
+                        placeholderText="MM/DD/YYYY"
+                        selected={fromDate}
+                        onChange={(date) => { setFromDate(date); setFromDateString(moment(date).format("MM/DD/YYYY")) }}
+                        minDate={new Date()}
+                        dateFormat="MM/dd/yyyy"
+                    /><br />
 
-                <label className="transaction-form-label" htmlFor="to-date">{t('transaction.toDate')}<span className="required-field">*</span></label><br />
-                <DatePicker
-                    className="date-picker"
-                    placeholderText="MM/DD/YYYY"
-                    selected={toDate}
-                    onChange={(date) => { setToDate(date); setToDateString(moment(date).format("MM/DD/YYYY")) }}
-                    minDate={new Date()}
-                    dateFormat="MM/dd/yyyy"
-                /><br />
-
+                    <label className="transaction-form-label" htmlFor="to-date">{t('transaction.toDate')}<span className="required-field">*</span></label><br />
+                    <DatePicker
+                        className="date-picker"
+                        placeholderText="MM/DD/YYYY"
+                        selected={toDate}
+                        onChange={(date) => { setToDate(date); setToDateString(moment(date).format("MM/DD/YYYY")) }}
+                        minDate={new Date()}
+                        dateFormat="MM/dd/yyyy"
+                    /><br />
+                    </>
+                )
+                }
                 <input className="transaction-form-submit" type="submit" value={t('transaction.submit')} disabled={isLoading}></input>
             </form>
             <p className="dashboard-option-title">{t('transaction.recentTrans')}</p>

@@ -23,11 +23,11 @@ const BookTransactionSchema = new mongoose.Schema({
     },
     fromDate: {
         type: String,
-        require: true,
+        // require: true,
     },
     toDate: {
         type: String,
-        require: true,
+        // require: true,
     },
     returnDate: {
         type: String

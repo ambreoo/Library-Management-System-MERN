@@ -4,6 +4,55 @@ import BookCategory from "../models/BookCategory.js"
 
 const router = express.Router()
 
+// POST /api/books/add-to-holdlist/:bookId
+router.post("/add-to-holdlist/:bookId", async (req, res) => {
+    try {
+        const { userId } = req.body;
+
+        if (!userId) {
+            return res.status(400).json("User ID is required");
+        }
+
+        const book = await Book.findById(req.params.bookId);
+        if (!book) {
+            return res.status(404).json("Book not found");
+        }
+
+        // Prevent duplicate entries
+        if (book.bookOnHold.includes(userId)) {
+            return res.status(200).json("User already on the hold list");
+        }
+
+        await book.updateOne({ $push: { bookOnHold: userId } });
+        res.status(200).json("User added to book hold list");
+    } catch (err) {
+        console.log(err);
+        res.status(504).json("Failed to update hold list");
+    }
+});
+
+// PUT /api/books/remove-from-holdlist/:bookId
+router.put("/remove-from-holdlist/:bookId", async (req, res) => {
+    try {
+        const { userId } = req.body;
+
+        if (!userId) {
+            return res.status(400).json("User ID is required");
+        }
+
+        const book = await Book.findById(req.params.bookId);
+        if (!book) {
+            return res.status(404).json("Book not found");
+        }
+
+        await book.updateOne({ $pull: { bookOnHold: userId } });
+        res.status(200).json("User removed from book hold list");
+    } catch (err) {
+        console.log(err);
+        res.status(504).json("Failed to remove user from hold list");
+    }
+});
+
 /* Get all books in the db */
 router.get("/allbooks", async (req, res) => {
     try {

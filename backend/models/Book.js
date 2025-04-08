@@ -33,6 +33,10 @@ const BookSchema = new mongoose.Schema({
         type:Number,
         require:true
     },
+    bookOnHold:[{
+        type:mongoose.Types.ObjectId,
+        ref:"User"
+    }],
     coverImageUrl:{
         type:String,
         default: ""
