@@ -249,8 +249,19 @@ function MemberDashboard() {
                                 });
                                 await axios.put(API_URL + `api/users/cancel-transaction/${memberDetails._id}`, {
                                   transactionId: data._id
-                                });                                
-                                
+                                });
+                                setMemberDetails((prev) => ({
+                                  ...prev,
+                                  activeTransactions: prev.activeTransactions.filter(
+                                    (tx) => tx._id !== data._id
+                                  ),
+                                }));
+                          
+                                const updatedBook = await axios.get(API_URL + "api/books/getbook/" + data.bookId);
+                                setBooksOnHoldMap((prev) => ({
+                                  ...prev,
+                                  [data.bookId]: updatedBook.data.bookOnHold,
+                                }));                            
                                 alert("Reservation canceled successfully ✅");
                               } catch (err) {
                                 console.error("Failed to cancel reservation", err);
