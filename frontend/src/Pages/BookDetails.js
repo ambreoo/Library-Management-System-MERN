@@ -67,6 +67,21 @@ function BookDetails() {
 
     const handleReserve = async () => {
         try {
+            // check if user already reserved
+            const userData = await axios.get(`${API_URL}api/users/getuser/${user._id}`);
+            const alreadyReserved = userData.data.activeTransactions.some(
+                (tx) =>
+                tx.bookId === book._id &&
+                tx.transactionType === "Reserved" &&
+                tx.transactionStatus !== "Completed"
+            );
+        
+            if (alreadyReserved) {
+                alert("You have already reserved this book.");
+                return;
+            }
+        
+            // place reservation
             const res = await axios.post(`${API_URL}api/transactions/add-transaction`, {
                 bookId: book._id,
                 borrowerId: user._id,
@@ -76,19 +91,26 @@ function BookDetails() {
                 fromDate: null,
                 toDate: null,
             });
-
+        
             await axios.put(`${API_URL}api/users/${res.data._id}/move-to-activetransactions`, {
                 userId: user._id,
-            });              
-      
-            // Add user to hold list
-            await axios.post(`${API_URL}api/books/add-to-holdlist/${book._id}`, {
-                userId: user._id
             });
-      
+        
+            // add to hold list
+            await axios.post(`${API_URL}api/books/add-to-holdlist/${book._id}`, {
+                userId: user._id,
+            });
+        
+            // decrease book count if book is available (i.e., user got "Ready")
+            if (book.bookCountAvailable > 0) {
+                await axios.put(`${API_URL}api/books/updatebook/${book._id}`, {
+                    bookCountAvailable: book.bookCountAvailable - 1,
+                });
+            }
+        
             alert("You've successfully placed a reservation ✅");
-      
-            // re-fetch book to update the UI
+        
+            // refresh book info to update UI
             const updated = await axios.get(`${API_URL}api/books/getbook/${book._id}`);
             setBook(updated.data);
       
@@ -96,7 +118,7 @@ function BookDetails() {
             console.error("Failed to reserve:", err);
             alert("Failed to reserve this book");
         }
-    };      
+    };          
 
     return (
     <div className="book-details">

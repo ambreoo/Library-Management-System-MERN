@@ -190,19 +190,14 @@ router.post("/addbook", async (req, res) => {
 
 /* Addding book */
 router.put("/updatebook/:id", async (req, res) => {
-    if (req.body.isAdmin) {
-        try {
-            await Book.findByIdAndUpdate(req.params.id, {
-                $set: req.body,
-            });
-            res.status(200).json("Book details updated successfully");
-        }
-        catch (err) {
-            res.status(504).json(err);
-        }
+    try {
+        await Book.findByIdAndUpdate(req.params.id, {
+            $set: req.body,
+        });
+        res.status(200).json("Book details updated successfully");
     }
-    else {
-        return res.status(403).json("You dont have permission to delete a book!");
+    catch (err) {
+        res.status(504).json(err);
     }
 })
 
