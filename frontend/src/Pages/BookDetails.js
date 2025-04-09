@@ -123,20 +123,14 @@ function BookDetails() {
     return (
     <div className="book-details">
         <div className="back-button-container">
-            {isRegularUser &&
-                (book.bookCountAvailable > 0 ? (
-                    <button
-                    className="edit-button"
-                    onClick={handleReserve}
-                    >
-                    📚 Reserve this Book
-                    </button>
-                ) : (
-                    <p>
-                    All copies are currently checked out. You can still reserve to be on the waitlist.
-                    </p>
-                ))
-                }
+        {isRegularUser && (
+            <button
+                className="edit-button"
+                onClick={handleReserve}
+            >
+                📚 Reserve this Book
+            </button>
+            )}
             {user?.isAdmin && !editMode && (
                 <button
                 className="edit-button"
