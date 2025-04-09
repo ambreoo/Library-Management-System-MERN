@@ -34,30 +34,19 @@ router.post("/add-to-holdlist/:bookId", async (req, res) => {
 
 router.post("/convert-reservation", async (req, res) => {
     try {
-    const { transactionId, fromDate, toDate, userId, bookId } = req.body;
+        const { userId, bookId } = req.body;
 
-    if (!transactionId || !userId || !bookId || !fromDate || !toDate) {
-        return res.status(400).json("Missing required fields");
-    }
-
-    await BookTransaction.findByIdAndUpdate(transactionId, {
-        transactionType: "Issued",
-        fromDate,
-        toDate
-    });
-
-    await Book.findByIdAndUpdate(bookId, {
-        $pull: {
-            bookOnHold: userId,
-        }
-    });
-
-    return res.status(200).json("Reservation successfully converted to Issued");
+        await Book.findByIdAndUpdate(bookId, {
+            $pull: {
+                bookOnHold: userId,
+            }
+        });
+        return res.status(200).json("Reservation successfully converted to Issued");
     } catch (err) {
         console.error("❌ Error in convert-reservation:", err);
         return res.status(500).json("Failed to convert reservation");
     }
-  });  
+});  
 
 // PUT /api/books/remove-from-holdlist/:bookId
 router.put("/remove-from-holdlist/:bookId", async (req, res) => {

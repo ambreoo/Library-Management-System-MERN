@@ -97,9 +97,6 @@ function GetMember() {
                 isAdmin:user.isAdmin
             })
             await axios.post(API_URL + "api/transactions/convert-reservation", {
-                transactionId,
-                fromDate: moment(fromDate).format("MM/DD/YYYY"),
-                toDate: moment(toDate).format("MM/DD/YYYY"),
                 userId: borrowerId,
                 bookId
               });              
