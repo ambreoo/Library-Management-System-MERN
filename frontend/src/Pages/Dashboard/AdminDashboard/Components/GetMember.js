@@ -284,30 +284,40 @@ function GetMember() {
                                             )}
                                         </td>
                                         <td>{data.transactionStatus === "Ready" ? "Ready" : allBooks.find((b) => b._id === data.bookId)?.bookOnHold.findIndex((id) => id === memberDetails._id) + 1 || "-"}</td>
-                                        <td>
-                                            {
-                                                data.transactionStatus === "Ready" ? (
-                                                <button onClick={() => convertToIssue(data._id, fromDate, toDate, data.borrowerId, data.bookId)} disabled={!fromDate || !toDate}>{t('getMember.convert')}</button>
-                                                ) : (
-                                                <button onClick={async () => {
-                                                    try {
-                                                        await axios.put(API_URL + `api/books/remove-from-holdlist/${data.bookId}`, {
-                                                            userId: data.borrowerId
-                                                        });
-                                                        await axios.delete(API_URL + `api/transactions/remove-transaction/${data._id}`, {
-                                                            data: { userId: data.borrowerId }
-                                                        });
-                                                        await axios.put(API_URL + `api/users/cancel-transaction/${data.borrowerId}`, {
-                                                            transactionId: data._id
-                                                        });
-                                                        setExecutionStatus("Completed");
-                                                        alert("Reservation removed ✅");
-                                                    } catch (err) {
-                                                        console.error("Failed to remove reservation", err);
-                                                    }
-                                                }}>Remove</button>
-                                                )
-                                            }
+                                        <td style={{ display: "flex", flexDirection: "column", gap: "6px", color: "green"}}>
+                                            {/* Convert button */}
+                                            <button
+                                                onClick={() => convertToIssue(data._id, fromDate, toDate, data.borrowerId, data.bookId)}
+                                                disabled={data.transactionStatus !== "Ready" || !fromDate || !toDate}
+                                            >
+                                                {t('getMember.convert')}
+                                            </button>
+
+                                            {/* Remove button */}
+                                            <button
+                                                className="remove-hold-button"
+                                                onClick={async () => {
+                                                try {
+                                                    await axios.put(API_URL + `api/books/remove-from-holdlist/${data.bookId}`, {
+                                                    userId: data.borrowerId
+                                                    });
+                                                    await axios.delete(API_URL + `api/transactions/remove-transaction/${data._id}`, {
+                                                    data: { userId: data.borrowerId }
+                                                    });
+                                                    await axios.put(API_URL + `api/users/cancel-transaction/${data.borrowerId}`, {
+                                                    transactionId: data._id
+                                                    });
+
+                                                    setExecutionStatus("Completed");
+                                                    alert("Reservation removed ✅");
+                                                } catch (err) {
+                                                    console.error("Failed to remove reservation", err);
+                                                    alert("Failed to remove reservation ❌");
+                                                }
+                                                }}
+                                            >
+                                                Remove
+                                            </button>
                                             </td>
                                     </tr>
                                 )

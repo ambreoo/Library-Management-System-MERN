@@ -16,6 +16,7 @@ function BookDetails() {
     const [book, setBook] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [editedBook, setEditedBook] = useState({});
+    const isRegularUser = user && !user.isAdmin;
 
     useEffect(() => {
         const fetchBook = async () => {
@@ -64,9 +65,52 @@ function BookDetails() {
 
     if (!book) return <div className="book-details">Loading...</div>;
 
+    const handleReserve = async () => {
+        try {
+            const res = await axios.post(`${API_URL}api/transactions/add-transaction`, {
+                bookId: book._id,
+                borrowerId: user._id,
+                borrowerName: user.userFullName,
+                bookName: book.bookName,
+                transactionType: "Reserved",
+                fromDate: null,
+                toDate: null,
+            });
+      
+            // Add user to hold list
+            await axios.post(`${API_URL}api/books/add-to-holdlist/${book._id}`, {
+                userId: user._id
+            });
+      
+            alert("You've successfully placed a reservation ✅");
+      
+            // re-fetch book to update the UI
+            const updated = await axios.get(`${API_URL}api/books/getbook/${book._id}`);
+            setBook(updated.data);
+      
+        } catch (err) {
+            console.error("Failed to reserve:", err);
+            alert("Failed to reserve this book");
+        }
+    };      
+
     return (
     <div className="book-details">
         <div className="back-button-container">
+            {isRegularUser &&
+                (book.bookCountAvailable > 0 ? (
+                    <button
+                    className="edit-button"
+                    onClick={handleReserve}
+                    >
+                    📚 Reserve this Book
+                    </button>
+                ) : (
+                    <p>
+                    All copies are currently checked out. You can still reserve to be on the waitlist.
+                    </p>
+                ))
+                }
             {user?.isAdmin && !editMode && (
                 <button
                 className="edit-button"
@@ -122,11 +166,11 @@ function BookDetails() {
               <p><strong>ISBN:</strong> {book.isbn}</p>
               <p><strong>Congress Code:</strong> {book.congressCode}</p>
               <p><strong>Available Copies:</strong> {book.bookCountAvailable}</p>
+              <p><strong>On Hold:</strong> {book.bookOnHold.length}</p>
             </>
           )}
         </div>
       </div>
-
       <div className="book-nav-buttons">
         {editMode ? (
           <>
