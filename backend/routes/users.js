@@ -53,18 +53,13 @@ router.put("/updateuser/:id", async (req, res) => {
 
 /* Adding transaction to active transactions list */
 router.put("/:id/move-to-activetransactions" , async (req,res)=>{
-    if(req.body.isAdmin){
-        try{
-            const user = await User.findById(req.body.userId);
-            await user.updateOne({$push:{activeTransactions:req.params.id}})
-            res.status(200).json("Added to Active Transaction")
-        }
-        catch(err){
-            res.status(500).json(err)
-        }
+    try{
+        const user = await User.findById(req.body.userId);
+        await user.updateOne({$push:{activeTransactions:req.params.id}})
+        res.status(200).json("Added to Active Transaction")
     }
-    else{
-        res.status(403).json("Only Admin can add a transaction")
+    catch(err){
+        res.status(500).json(err)
     }
 })
 

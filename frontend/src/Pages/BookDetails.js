@@ -76,6 +76,10 @@ function BookDetails() {
                 fromDate: null,
                 toDate: null,
             });
+
+            await axios.put(`${API_URL}api/users/${res.data._id}/move-to-activetransactions`, {
+                userId: user._id,
+            });              
       
             // Add user to hold list
             await axios.post(`${API_URL}api/books/add-to-holdlist/${book._id}`, {
