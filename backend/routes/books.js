@@ -63,7 +63,6 @@ router.put("/remove-from-holdlist/:bookId", async (req, res) => {
         }
     
         const isUserOnHold = book.bookOnHold.includes(userId);
-    
         if (!isUserOnHold) {
             return res.status(200).json("User was not on the hold list");
         }
@@ -74,32 +73,58 @@ router.put("/remove-from-holdlist/:bookId", async (req, res) => {
             transactionType: "Reserved",
             transactionStatus: { $in: ["Active", "Ready"] }
         });
-
+    
         if (!transaction) {
             return res.status(404).json("Transaction not found");
         }
-          
+    
         const update = {
             $pull: {
-              bookOnHold: userId,
-              transactions: transaction._id
+            bookOnHold: userId,
+            transactions: transaction._id
             }
         };
-        
-        // user check out, otherwise is a drop from waitlist
-        if (transaction.transactionStatus === "Ready") {
+    
+        // ❗ Check how many are still on hold (excluding current user)
+        const remainingHolds = book.bookOnHold.filter(id => id.toString() !== userId.toString());
+    
+        // ✅ Only increase availability if transaction was Ready AND no one else is waiting
+        if (transaction.transactionStatus === "Ready" && remainingHolds.length === 0) {
             update.$inc = { bookCountAvailable: 1 };
         }
+    
         await Book.findByIdAndUpdate(book._id, update);
-
+    
+        // 🔁 Promote next user in line to "Ready"
+        if (remainingHolds.length > 0) {
+            const nextUserId = remainingHolds[0];
+            const nextTransaction = await BookTransaction.findOne({
+            bookId: book._id,
+            borrowerId: nextUserId,
+            transactionType: "Reserved",
+            transactionStatus: "Active"
+            });
+    
+            if (nextTransaction) {
+                await BookTransaction.findByIdAndUpdate(nextTransaction._id, {
+                    transactionStatus: "Ready"
+                });
+            console.log(`📦 Promoted user ${nextUserId} to Ready`);
+            }
+        }
+    
         return res.status(200).json(
-            `User removed from hold list${transaction?.transactionStatus === "Ready" ? " and availability updated" : ""}`
+            `User removed from hold list${
+            transaction.transactionStatus === "Ready" && remainingHolds.length === 0
+                ? " and availability updated"
+                : ""
+            }`
         );
     } catch (err) {
         console.error("❌ Error in remove-from-holdlist:", err);
         return res.status(504).json("Failed to remove user from hold list");
     }
-});
+  });  
 
 /* Get all books in the db */
 router.get("/allbooks", async (req, res) => {

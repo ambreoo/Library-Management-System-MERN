@@ -120,10 +120,32 @@ function GetMember() {
             /* Getting borrower points alreadt existed */
             const borrowerdata = await axios.get(API_URL+"api/users/getuser/"+borrowerId)
             const book_details = await axios.get(API_URL+"api/books/getbook/"+bookId)
-            await axios.put(API_URL+"api/books/updatebook/"+bookId,{
-                isAdmin:user.isAdmin,
-                bookCountAvailable:book_details.data.bookCountAvailable + 1
-            })
+            if (book_details.data.bookOnHold.length > 0) {
+                const nextUserId = book_details.data.bookOnHold[0];
+                
+                const holdTransactionRes = await axios.get(API_URL + "api/transactions/all-transactions");
+                const allTransactions = holdTransactionRes.data;
+                
+                const nextTransaction = allTransactions.find(
+                    (tx) =>
+                    tx.bookId === bookId &&
+                    tx.borrowerId === nextUserId &&
+                    tx.transactionType === "Reserved" &&
+                    tx.transactionStatus === "Active"
+                );
+                
+                if (nextTransaction) {
+                    await axios.put(API_URL + "api/transactions/update-transaction/" + nextTransaction._id, {
+                    isAdmin: user.isAdmin,
+                    transactionStatus: "Ready"
+                    });
+                }
+                } else {
+                    await axios.put(API_URL + "api/books/updatebook/" + bookId, {
+                        isAdmin: user.isAdmin,
+                        bookCountAvailable: book_details.data.bookCountAvailable + 1
+                    });
+                }
 
             /* Pulling out the transaction id from user active Transactions and pushing to Prev Transactions */
             await axios.put(API_URL + `api/users/${transactionId}/move-to-prevtransactions`, {
