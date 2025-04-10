@@ -50,7 +50,7 @@ function AddTransaction() {
             const book_details = await axios.get(API_URL + "api/books/getbook/" + bookId)
             
             /* Checking weather the book is available or not */
-            if ((book_details.data.bookCountAvailable > 0 && (transactionType === "Issued" || transactionType === "Reserved")) || (book_details.data.bookCountAvailable === 0 && transactionType === "Reserved")) {
+            if ((book_details.data.bookCountAvailable > 0 && (transactionType === "Issued" || transactionType === "Reserved"))) {
                 const transactionData = {
                     bookId: bookId,
                     borrowerId: borrowerId,
