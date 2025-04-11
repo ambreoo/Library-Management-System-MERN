@@ -16,6 +16,7 @@ function BookDetails() {
     const [book, setBook] = useState(null);
     const [editMode, setEditMode] = useState(false);
     const [editedBook, setEditedBook] = useState({});
+    const [newCoverImageFile, setNewCoverImageFile] = useState(null);
     const isRegularUser = user && !user.isAdmin;
 
     useEffect(() => {
@@ -43,15 +44,38 @@ function BookDetails() {
         }
     }, [book]);
 
+    const uploadToCloudinary = async (file) => {
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "book_uploads"); // your unsigned preset name
+  
+      const cloudName = "dbhu270bd";
+      const url = `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`;
+  
+      const res = await axios.post(url, formData);
+      return res.data.secure_url;
+  };  
+
     const handleSave = async () => {
-        try {
-            await axios.put(`${API_URL}api/books/updatebook/${book._id}`, { ...editedBook, isAdmin: user?.isAdmin },);
-            setBook({ ...book, ...editedBook });
-            setEditMode(false);
-            alert("Book updated successfully 🎉");
-        } catch (err) {
-            console.error("Failed to save book:", err);
+      try {
+        let uploadedUrl = book.coverImageUrl;
+        if (newCoverImageFile) {
+            uploadedUrl = await uploadToCloudinary(newCoverImageFile);
         }
+
+        await axios.put(`${API_URL}api/books/updatebook/${book._id}`, {
+            ...editedBook,
+            isAdmin: user?.isAdmin,
+            coverImageUrl: uploadedUrl
+        });
+
+        setBook({ ...book, ...editedBook, coverImageUrl: uploadedUrl });
+        setEditMode(false);
+        setNewCoverImageFile(null);
+        alert("Book updated successfully 🎉");
+    } catch (err) {
+        console.error("Failed to save book:", err);
+    }
     };
 
     const goToBook = (index) => {
@@ -124,90 +148,116 @@ function BookDetails() {
     };          
 
     return (
-    <div className="book-details">
-        <div className="back-button-container">
-        {isRegularUser && (
-            <button
-                className="edit-button"
-                onClick={handleReserve}
-            >
-                📚 Reserve this Book
-            </button>
-            )}
-            {user?.isAdmin && !editMode && (
+      <div className="signin-container" style={{background: "url('/library.jpg') no-repeat center center/cover"}}>
+        <div className="book-details">
+            <div className="back-button-container">
+            {isRegularUser && (
                 <button
-                className="edit-button"
-                onClick={() => setEditMode(true)}
-                title="Edit Book Info"
-                >✏️ Edit</button>
+                    className="edit-button"
+                    onClick={handleReserve}
+                >
+                    📚 Reserve this Book
+                </button>
+                )}
+                {user?.isAdmin && !editMode && (
+                    <button
+                    className="edit-button"
+                    onClick={() => setEditMode(true)}
+                    title="Edit Book Info"
+                    >✏️ Edit</button>
+                )}
+                {!editMode && (
+                <button
+                    className="back-button"
+                    onClick={() => {
+                    const { page } = location.state || {};
+                    if (page != null) sessionStorage.setItem("booksGridState", JSON.stringify({ page }));
+                    history.push("/books");
+                    }}
+                >
+                    ← Back to All Books
+                </button>
+                )}
+            </div>
+            <div className="book-info">
+            <div className="book-cover">
+              {editMode ? (
+                <div
+                  onClick={() => document.getElementById("imageUploadInput").click()}
+                  style={{ cursor: "pointer" }}
+                >
+                  {newCoverImageFile ? (
+                    <img src={URL.createObjectURL(newCoverImageFile)} alt="Preview" />
+                  ) : book.coverImageUrl ? (
+                    <img src={book.coverImageUrl} alt={book.bookName} />
+                  ) : (
+                    <div className="no-image">Click to upload cover</div>
+                  )}
+                  <input
+                    id="imageUploadInput"
+                    type="file"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={(e) => {
+                      if (e.target.files[0]) {
+                        setNewCoverImageFile(e.target.files[0]);
+                      }
+                    }}
+                  />
+                </div>
+              ) : book.coverImageUrl ? (
+                <img src={book.coverImageUrl} alt={book.bookName} />
+              ) : (
+                <div className="no-image">No cover image</div>
+              )}
+            </div>
+            <div className="book-meta">
+              {editMode ? (
+                <>
+                  <h1><input className="edit-overlay-input" value={editedBook.bookName} onChange={(e) => setEditedBook({ ...editedBook, bookName: e.target.value })} /></h1>
+                  <p><strong>Author:</strong> <input className="edit-overlay-input" value={editedBook.author} onChange={(e) => setEditedBook({ ...editedBook, author: e.target.value })} /></p>
+                  <p><strong>Publisher:</strong> <input className="edit-overlay-input" value={editedBook.publisher} onChange={(e) => setEditedBook({ ...editedBook, publisher: e.target.value })} /></p>
+                  <p><strong>ISBN:</strong> <input className="edit-overlay-input" value={editedBook.isbn} onChange={(e) => setEditedBook({ ...editedBook, isbn: e.target.value })} /></p>
+                  <p><strong>Congress Code:</strong> <input className="edit-overlay-input" value={editedBook.congressCode} onChange={(e) => setEditedBook({ ...editedBook, congressCode: e.target.value })} /></p>
+                  <p><strong>Available Copies:</strong>
+                    <span className="editable-field">
+                      <div className="counter-controls inline">
+                        <button onClick={() => setEditedBook((prev) => ({ ...prev, bookCountAvailable: Math.max(0, prev.bookCountAvailable - 1) }))}>▼</button>
+                        <span>{editedBook.bookCountAvailable}</span>
+                        <button onClick={() => setEditedBook((prev) => ({ ...prev, bookCountAvailable: prev.bookCountAvailable + 1 }))}>▲</button>
+                      </div>
+                    </span>
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h1>{book.bookName}</h1>
+                  <p><strong>Author:</strong> {book.author}</p>
+                  <p><strong>Publisher:</strong> {book.publisher}</p>
+                  <p><strong>ISBN:</strong> {book.isbn}</p>
+                  <p><strong>Congress Code:</strong> {book.congressCode}</p>
+                  <hr style={{ border: '0', borderTop: '1px solid #ccc', margin: '1rem 0' }} />
+                  <p><strong>Available Copies:</strong> {book.bookCountAvailable}</p>
+                  <p><strong>On Hold:</strong> {book.bookOnHold.length}</p>
+                </>
+              )}
+            </div>
+          </div>
+          <div className="book-nav-buttons">
+            {editMode ? (
+              <>
+                <button className="save-button" onClick={handleSave}>💾 Save</button>
+                <button className="cancel-button" onClick={() => {setEditMode(false); setNewCoverImageFile(null);}}>Cancel</button>
+              </>
+            ) : (
+              <>
+                <button className="save-button" onClick={() => goToBook(currentIndex - 1)} disabled={currentIndex <= 0}>&lt; Previous</button>
+                <button className="save-button" onClick={() => goToBook(currentIndex + 1)} disabled={currentIndex >= filteredBooks.length - 1}>Next &gt;</button>
+              </>
             )}
-            {!editMode && (
-            <button
-                className="back-button"
-                onClick={() => {
-                const { page } = location.state || {};
-                if (page != null) sessionStorage.setItem("booksGridState", JSON.stringify({ page }));
-                history.push("/books");
-                }}
-            >
-                ← Back to All Books
-            </button>
-            )}
-        </div>
-        <div className="book-info">
-        <div className="book-cover">
-          {book.coverImageUrl ? (
-            <img src={book.coverImageUrl} alt={book.bookName} />
-          ) : (
-            <div className="no-image">No cover image</div>
-          )}
-        </div>
-
-        <div className="book-meta">
-          {editMode ? (
-            <>
-              <h1><input className="edit-overlay-input" value={editedBook.bookName} onChange={(e) => setEditedBook({ ...editedBook, bookName: e.target.value })} /></h1>
-              <p><strong>Author:</strong> <input className="edit-overlay-input" value={editedBook.author} onChange={(e) => setEditedBook({ ...editedBook, author: e.target.value })} /></p>
-              <p><strong>Publisher:</strong> <input className="edit-overlay-input" value={editedBook.publisher} onChange={(e) => setEditedBook({ ...editedBook, publisher: e.target.value })} /></p>
-              <p><strong>ISBN:</strong> <input className="edit-overlay-input" value={editedBook.isbn} onChange={(e) => setEditedBook({ ...editedBook, isbn: e.target.value })} /></p>
-              <p><strong>Congress Code:</strong> <input className="edit-overlay-input" value={editedBook.congressCode} onChange={(e) => setEditedBook({ ...editedBook, congressCode: e.target.value })} /></p>
-              <p><strong>Available Copies:</strong>
-                <span className="editable-field">
-                  <div className="counter-controls inline">
-                    <button onClick={() => setEditedBook((prev) => ({ ...prev, bookCountAvailable: Math.max(0, prev.bookCountAvailable - 1) }))}>▼</button>
-                    <span>{editedBook.bookCountAvailable}</span>
-                    <button onClick={() => setEditedBook((prev) => ({ ...prev, bookCountAvailable: prev.bookCountAvailable + 1 }))}>▲</button>
-                  </div>
-                </span>
-              </p>
-            </>
-          ) : (
-            <>
-              <h1>{book.bookName}</h1>
-              <p><strong>Author:</strong> {book.author}</p>
-              <p><strong>Publisher:</strong> {book.publisher}</p>
-              <p><strong>ISBN:</strong> {book.isbn}</p>
-              <p><strong>Congress Code:</strong> {book.congressCode}</p>
-              <p><strong>Available Copies:</strong> {book.bookCountAvailable}</p>
-              <p><strong>On Hold:</strong> {book.bookOnHold.length}</p>
-            </>
-          )}
+          </div>
         </div>
       </div>
-      <div className="book-nav-buttons">
-        {editMode ? (
-          <>
-            <button className="save-button" onClick={handleSave}>💾 Save</button>
-            <button className="cancel-button" onClick={() => setEditMode(false)}>Cancel</button>
-          </>
-        ) : (
-          <>
-            <button className="save-button" onClick={() => goToBook(currentIndex - 1)} disabled={currentIndex <= 0}>&lt; Previous</button>
-            <button className="save-button" onClick={() => goToBook(currentIndex + 1)} disabled={currentIndex >= filteredBooks.length - 1}>Next &gt;</button>
-          </>
-        )}
-      </div>
-    </div>
   );
 }
 

@@ -1,12 +1,17 @@
+.signin-container {
+  justify-content: center;
+}
+
 .book-details {
   position: relative;
-  max-width: 800px;
-  margin: 200px auto 40px auto;
+  min-width: 800px;
+  margin: 100px auto 40px auto;
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background: #fff;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
+  z-index: 2;
 }
 
 .back-button-container {
@@ -30,12 +35,13 @@
 
 .book-info {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 24px;
+  align-items: flex-start;
 }
 
 .book-cover {
-  flex: 1 1 200px;
+  flex: 0 0 220px;
   max-width: 240px;
 }
 
@@ -59,6 +65,7 @@
 
 .book-meta {
   flex: 2 1 400px;
+  min-width: 300px;
 }
 
 .book-meta h1 {
