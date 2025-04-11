@@ -12,6 +12,7 @@
 .books {
     width: 90%;
     display: flex;
+    min-height: 0;
     flex-direction: column;
     align-items: center;
 }
@@ -22,13 +23,11 @@
     display: flex;
     justify-content: center;
     position: relative; /* Ensures it's positioned properly */
-    z-index: 10; /* Keeps it above the grid */
-    background-color: #F8F9FA;
     padding: 15px 0;
 }
 
 /* Search box */
-.search-box {
+.search-box-all {
     display: flex;
     align-items: center;
     width: 40%;
@@ -51,7 +50,7 @@
 }
 
 /* Search input */
-.search-box input {
+.search-box-all input {
     flex: 1;
     border: none;
     outline: none;
@@ -62,7 +61,7 @@
 }
 
 /* Search button */
-.search-box button {
+.search-box-all button {
     background: transparent;
     border: none;
     font-size: 20px;
@@ -74,5 +73,12 @@
     max-height: 80vh;
     min-height: 300px;
     overflow: auto;
-    padding-top: 35px; /* Extra padding to push it down */
+    padding-top: 55px;
+    overflow: hidden;
 }
+
+.ag-theme-quartz .ag-cell {
+    display: flex;
+    align-items: center;
+}
+  

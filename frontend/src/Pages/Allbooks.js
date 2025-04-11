@@ -4,11 +4,8 @@ import axios from "axios";
 import { AgGridReact } from "ag-grid-react";
 import 'ag-grid-community/styles/ag-grid.css';
 import "ag-grid-community/styles/ag-theme-quartz.css";
-import { ClientSideRowModelModule, AllCommunityModule, ModuleRegistry, provideGlobalGridOptions } from 'ag-grid-community';
 import "./Allbooks.css";
 
-ModuleRegistry.registerModules([ClientSideRowModelModule, AllCommunityModule]); 
-provideGlobalGridOptions({ theme: "legacy" });
 
 function useQuery() {
   return new URLSearchParams(useLocation().search);
@@ -127,7 +124,28 @@ function Allbooks() {
     setFilteredBooks(results);
   }, [searchQueryResult, selectedCategory, books, categories, isLoading]);
 
+  const ThumbnailRenderer = (props) => {
+    const url = props.value;
+    return url ? (
+      <img
+        src={url}
+        alt="cover"
+        style={{ height: "60px", width: "auto", borderRadius: "4px", objectFit: "cover" }}
+      />
+    ) : (
+      <div style={{ fontStyle: "italic", color: "#999" }}>No image</div>
+    );
+  };  
+
   const columns = [
+    {
+      headerName: "",
+      field: "coverImageUrl",
+      width: 100,
+      cellRenderer: ThumbnailRenderer,
+      sortable: false,
+      filter: false,
+    },
     { headerName: "Name", field: "bookName", sortable: true, flex: 1 },
     { headerName: "Author", field: "author", sortable: true, flex: 1 },
     {
@@ -139,13 +157,13 @@ function Allbooks() {
           ? params.data.categories.map((id) => categories[id] || "Unknown").join(", ")
           : "",
     },
-  ];
+  ];  
 
   return (
-    <div className="books-page">
+    <div className="books-page" style={{background: "url('/library2.jpg') no-repeat center center/cover"}}>
       <div className="books">
         <div className="search-bar-container">
-          <div className="search-box">
+          <div className="search-box-all">
             <select 
               className="filter-dropdown" 
               value={selectedCategory} 
@@ -166,11 +184,12 @@ function Allbooks() {
           </div>
         </div>
 
-        <div className="ag-theme-quartz" style={{ width: "90%", height: "80vh", margin: "auto"}}>
+        <div className="ag-theme-quartz" style={{ width: "90%", height: "70vh"}}>
           <AgGridReact
             suppressNoRowsOverlay
             ref={gridRef}
             rowData={!isLoading ? filteredBooks : null}
+            rowHeight={80}
             columnDefs={columns} 
             pagination={true} 
             paginationPageSize={20}
