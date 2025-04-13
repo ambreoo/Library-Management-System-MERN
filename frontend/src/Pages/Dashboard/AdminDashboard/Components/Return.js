@@ -25,6 +25,7 @@ function Return() {
     const overdueGroupedByUser = allTransactions
         .filter(tx =>
         tx.transactionType === "Issued" &&
+        tx.transactionStatus === "Ready" &&
         new Date(tx.toDate) < new Date()
         )
         .reduce((acc, tx) => {
