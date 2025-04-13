@@ -1,223 +1,98 @@
-import React, { useContext, useEffect, useState } from 'react'
-import "../AdminDashboard.css"
-import axios from "axios"
-import { Dropdown } from 'semantic-ui-react'
-import '../../MemberDashboard/MemberDashboard.css'
-import moment from "moment"
-import { AuthContext } from '../../../../Context/AuthContext'
-
+import React, { useContext, useEffect, useState } from 'react';
+import axios from 'axios';
+import moment from 'moment';
+import { AuthContext } from '../../../../Context/AuthContext';
+import '../AdminDashboard.css';
 
 function Return() {
+    const API_URL = process.env.REACT_APP_API_URL;
+    const { user } = useContext(AuthContext);
 
-    const API_URL = process.env.REACT_APP_API_URL
-    // const API_URL = "http://localhost:3001/"
-    const { user } = useContext(AuthContext)
+    const [allTransactions, setAllTransactions] = useState([]);
 
-    const [allTransactions, setAllTransactions] = useState([])
-    const [ExecutionStatus, setExecutionStatus] = useState(null) /* For triggering the tabledata to be updated */ 
-
-    const [allMembersOptions, setAllMembersOptions] = useState(null)
-    const [borrowerId, setBorrowerId] = useState(null)
-
-
-    //Fetching all Members
     useEffect(() => {
-        const getMembers = async () => {
-            try {
-                const response = await axios.get(API_URL + "api/users/allmembers")
-                setAllMembersOptions(response.data.map((member) => (
-                    { value: `${member?._id}`, text: `${member?.userType === "Student" ? `${member?.userFullName}[${member?.admissionId}]` : `${member?.userFullName}[${member?.employeeId}]`}` }
-                )))
-            }
-            catch (err) {
-                console.log(err)
-            }
+        const getAllTransactions = async () => {
+        try {
+            const response = await axios.get(API_URL + "api/transactions/all-transactions");
+            setAllTransactions(response.data);
+        } catch (err) {
+            console.log(err);
         }
-        getMembers()
-    }, [API_URL])
+        };
+        getAllTransactions();
+    }, [API_URL]);
 
-
-    /* Getting all active transactions */
-    useEffect(()=>{
-        const getAllTransactions = async () =>{
-            try{
-                const response = await axios.get(API_URL+"api/transactions/all-transactions")
-                setAllTransactions(response.data.sort((a, b) => Date.parse(a.toDate) - Date.parse(b.toDate)).filter((data) => {
-                    return data.transactionStatus === "Active"
-                }))
-                console.log("Okay")
-                setExecutionStatus(null)
-            }
-            catch(err){
-                console.log(err)
-            }
+    const overdueGroupedByUser = allTransactions
+        .filter(tx =>
+        tx.transactionType === "Issued" &&
+        new Date(tx.toDate) < new Date()
+        )
+        .reduce((acc, tx) => {
+        if (!acc[tx.borrowerId]) {
+            acc[tx.borrowerId] = {
+            borrowerName: tx.borrowerName,
+            borrowerEmail: tx.borrowerEmail,
+            books: []
+            };
         }
-        getAllTransactions()
-    },[API_URL,ExecutionStatus])
+        acc[tx.borrowerId].books.push(tx);
+        return acc;
+        }, {});
 
-
-    const returnBook = async (transactionId,borrowerId,bookId,due) =>{
-        try{
-            /* Setting return date and transactionStatus to completed */
-            await axios.put(API_URL+"api/transactions/update-transaction/"+transactionId,{
-                isAdmin:user.isAdmin,
-                transactionStatus:"Completed",
-                returnDate:moment(new Date()).format("MM/DD/YYYY")
-            })
-
-            /* Getting borrower points alreadt existed */
-            const borrowerdata = await axios.get(API_URL+"api/users/getuser/"+borrowerId)
-            const points = borrowerdata.data.points
-
-            /* If the number of days after dueDate is greater than zero then decreasing points by 10 else increase by 10*/
-            if(due > 0){
-                await axios.put(API_URL+"api/users/updateuser/"+borrowerId,{
-                    points:points-10,
-                    isAdmin: user.isAdmin
-                })
-            }
-            else if(due<=0){
-                await axios.put(API_URL+"api/users/updateuser/"+borrowerId,{
-                    points:points+10,
-                    isAdmin: user.isAdmin
-                })
-            }
-
-            // if ppl on queue, preserve to them
-            const book_details = await axios.get(API_URL+"api/books/getbook/"+bookId)
-            if (book_details.data.bookOnHold.length > 0) {
-                const nextUserId = book_details.data.bookOnHold[0];
-              
-                const holdTransactionRes = await axios.get(API_URL + "api/transactions/all-transactions");
-                const allTransactions = holdTransactionRes.data;
-              
-                const nextTransaction = allTransactions.find(
-                  (tx) =>
-                    tx.bookId === bookId &&
-                    tx.borrowerId === nextUserId &&
-                    tx.transactionType === "Reserved" &&
-                    tx.transactionStatus === "Active"
-                );
-              
-                if (nextTransaction) {
-                  await axios.put(API_URL + "api/transactions/update-transaction/" + nextTransaction._id, {
-                    isAdmin: user.isAdmin,
-                    transactionStatus: "Ready"
-                  });
-                }
-              } else {
-                await axios.put(API_URL + "api/books/updatebook/" + bookId, {
-                  isAdmin: user.isAdmin,
-                  bookCountAvailable: book_details.data.bookCountAvailable + 1
-                });
-              }              
-
-            /* Pulling out the transaction id from user active Transactions and pushing to Prev Transactions */
-            await axios.put(API_URL + `api/users/${transactionId}/move-to-prevtransactions`, {
-                userId: borrowerId,
-                isAdmin: user.isAdmin
-            })
-
-            setExecutionStatus("Completed");
-            alert("Book returned to the library successfully")
+    const sendNotification = async (email, name, books) => {
+        try {
+            await axios.post(API_URL + "api/transactions/overdue-email", {
+                to: email,
+                subject: "Library Notice: Overdue Books",
+                text: `Hello ${name},\n\nYou have the following overdue book(s):\n\n` +
+                    books.map(b => `• ${b.bookName} (Due: ${moment(b.toDate).format("MMM DD, YYYY")})`).join("\n") +
+                    `\n\nPlease return them as soon as possible.\n\nThank you!`
+            });
+            alert("Notification sent to " + email);
+        } catch (err) {
+            console.error("Failed to send email:", err);
+            alert("Failed to send email");
         }
-        catch(err){
-            console.log(err)
-        }
-    }
-
-    const convertToIssue = async (transactionId) => {
-        try{
-            await axios.put(API_URL+"api/transactions/update-transaction/"+transactionId,{
-                transactionType:"Issued",
-                isAdmin:user.isAdmin
-            })
-            setExecutionStatus("Completed");
-            alert("Book issued succesfully 🎆")
-        }
-        catch(err){
-            console.log(err)
-        }
-    }
-
+    };
 
     return (
-        <div>
-            <div className='semanticdropdown returnbook-dropdown'>
-                <Dropdown
-                    placeholder='Select Member'
-                    fluid
-                    search
-                    selection
-                    value={borrowerId}
-                    options={allMembersOptions}
-                    onChange={(event, data) => setBorrowerId(data.value)}
-                />
+        <div className="return-container">
+        <h2 className="overdue-heading">Users with Overdue Books</h2>
+        {Object.entries(overdueGroupedByUser).length === 0 ? (
+            <p>No overdue books 🎉</p>
+        ) : (
+            Object.entries(overdueGroupedByUser).map(([userId, userData]) => (
+            <div key={userId} className="overdue-user-card">
+                <h4>{userData.borrowerName}</h4>
+                <table>
+                <thead>
+                    <tr>
+                    <th>Book</th>
+                    <th>Due Date</th>
+                    <th>Days Overdue</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {userData.books.map((book, i) => {
+                    const daysLate = Math.floor((Date.now() - new Date(book.toDate)) / 86400000);
+                    return (
+                        <tr key={i}>
+                        <td>{book.bookName}</td>
+                        <td>{moment(book.toDate).format("MMM DD, YYYY")}</td>
+                        <td>{daysLate}</td>
+                        </tr>
+                    );
+                    })}
+                </tbody>
+                </table>
+                <button onClick={() => sendNotification(userData.borrowerEmail, userData.borrowerName, userData.books)}>
+                Notify User
+                </button>
             </div>
-            <p className="dashboard-option-title">Issued</p>
-            <table className="admindashboard-table">
-                    <tr>
-                        <th>Book Name</th>
-                        <th>Borrower Name</th>
-                        <th>From Date</th>
-                        <th>To Date</th>
-                        <th>Fine</th>
-                        <th></th>
-                    </tr>
-                    {
-                        allTransactions?.filter((data)=>{
-                            if(borrowerId === null){
-                                return data.transactionType === "Issued"
-                            }
-                            else{
-                                return data.borrowerId === borrowerId && data.transactionType === "Issued"
-                            }
-                        }).map((data, index) => {
-                            return (
-                                <tr key={index}>
-                                    <td>{data.bookName}</td>
-                                    <td>{data.borrowerName}</td>
-                                    <td>{data.fromDate}</td>
-                                    <td>{data.toDate}</td>
-                                    <td>{(Math.floor(( Date.parse(moment(new Date()).format("MM/DD/YYYY")) - Date.parse(data.toDate) ) / 86400000)) <= 0 ? 0 : (Math.floor(( Date.parse(moment(new Date()).format("MM/DD/YYYY")) - Date.parse(data.toDate) ) / 86400000))*10}</td>
-                                    <td><button onClick={()=>{returnBook(data._id,data.borrowerId,data.bookId,(Math.floor(( Date.parse(moment(new Date()).format("MM/DD/YYYY")) - Date.parse(data.toDate) ) / 86400000)))}}>Return</button></td>
-                                </tr>
-                            )
-                        })
-                    }
-                </table>
-                <p className="dashboard-option-title">Reserved</p>
-            <table className="admindashboard-table">
-                    <tr>
-                        <th>Book Name</th>
-                        <th>Borrower Name</th>
-                        <th>From Date</th>
-                        <th>To Date</th>
-                        <th></th>
-                    </tr>
-                    {
-                        allTransactions?.filter((data)=>{
-                            if(borrowerId === null){
-                                return data.transactionType === "Reserved"
-                            }
-                            else{
-                                return data.borrowerId === borrowerId && data.transactionType === "Reserved"
-                            }
-                        }).map((data, index) => {
-                            return (
-                                <tr key={index}>
-                                    <td>{data.bookName}</td>
-                                    <td>{data.borrowerName}</td>
-                                    <td>{data.fromDate}</td>
-                                    <td>{data.toDate}</td>
-                                    <td><button onClick={()=>{convertToIssue(data._id)}}>Convert</button></td>
-                                </tr>
-                            )
-                        })
-                    }
-                </table>
+            ))
+        )}
         </div>
-    )
+    );
 }
 
-export default Return
+export default Return;

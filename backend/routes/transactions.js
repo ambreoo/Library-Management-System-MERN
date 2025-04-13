@@ -80,5 +80,16 @@ router.delete("/remove-transaction/:id", async (req, res) => {
     }
 });
 
+router.post("/overdue-email", async (req, res) => {
+    const { to, subject, text } = req.body;
+  
+    try {
+        await sendMail(to, subject, text);
+        res.status(200).json({ message: "Email sent" });
+    } catch (error) {
+        console.error("Error in email route:", error);
+        res.status(500).json({ error: "Failed to send email" });
+    }
+});
 
 export default router
