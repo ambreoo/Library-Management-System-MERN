@@ -81,6 +81,19 @@ router.delete("/remove-transaction/:id", async (req, res) => {
     }
 });
 
+router.get('/overdue-only', async (req, res) => {
+    try {
+        const overdue = await BookTransaction.find({
+            transactionType: "Issued",
+            transactionStatus: "Ready",
+            toDate: { $lt: new Date() }
+        });
+        res.json(overdue);
+    } catch (err) {
+        res.status(500).json({ error: "Failed to fetch overdue transactions" });
+    }
+});
+
 router.post("/overdue-email", async (req, res) => {
     const { to, subject, text } = req.body;
   

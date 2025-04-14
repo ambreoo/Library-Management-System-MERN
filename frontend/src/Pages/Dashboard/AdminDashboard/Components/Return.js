@@ -1,63 +1,78 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useMemo } from 'react';
 import axios from 'axios';
 import moment from 'moment';
 import { AuthContext } from '../../../../Context/AuthContext';
 import '../AdminDashboard.css';
 
 function Return() {
-    const API_URL = process.env.REACT_APP_API_URL;
-    const { user } = useContext(AuthContext);
+  const API_URL = process.env.REACT_APP_API_URL;
+  const { user } = useContext(AuthContext);
 
-    const [allTransactions, setAllTransactions] = useState([]);
+  const [overdueTransactions, setOverdueTransactions] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
 
-    useEffect(() => {
-        const getAllTransactions = async () => {
+  useEffect(() => {
+    const fetchTransactions = async () => {
         try {
-            const response = await axios.get(API_URL + "api/transactions/all-transactions");
-            setAllTransactions(response.data);
+            const res = await axios.get(API_URL + 'api/transactions/overdue-only');
+            setOverdueTransactions(res.data);
         } catch (err) {
-            console.log(err);
+            console.error(err);
         }
-        };
-        getAllTransactions();
-    }, [API_URL]);
+    };
+    fetchTransactions();
+}, [API_URL]);
 
-    const overdueGroupedByUser = allTransactions
-        .filter(tx =>
-        tx.transactionType === "Issued" &&
-        tx.transactionStatus === "Ready" &&
-        new Date(tx.toDate) < new Date()
-        )
-        .reduce((acc, tx) => {
+  useEffect(() => {
+    const fetchUsers = async () => {
+        try {
+            const res = await axios.get(API_URL + 'api/users/allmembers');
+            setAllUsers(res.data);
+        } catch (err) {
+            console.error(err);
+        }
+    };
+    fetchUsers();
+  }, [API_URL]);
+
+  // Group overdue transactions by user (with email)
+  const overdueGroupedByUser = useMemo(() => {
+    if (!overdueTransactions.length || !allUsers.length) return {};
+
+    return overdueTransactions.reduce((acc, tx) => {
+        const borrower = allUsers.find(u => String(u._id) === String(tx.borrowerId));
+        if (!borrower) return acc;
+
         if (!acc[tx.borrowerId]) {
             acc[tx.borrowerId] = {
-            borrowerName: tx.borrowerName,
-            borrowerEmail: tx.borrowerEmail,
+            borrowerName: borrower.userFullName || borrower.name || "Unknown User",
+            borrowerEmail: borrower.email,
             books: []
             };
         }
         acc[tx.borrowerId].books.push(tx);
         return acc;
-        }, {});
+    }, {});
+  }, [overdueTransactions, allUsers]);
 
-    const sendNotification = async (email, name, books) => {
-        try {
-            await axios.post(API_URL + "api/transactions/overdue-email", {
-                to: email,
-                subject: "Library Notice: Overdue Books",
-                text: `Hello ${name},\n\nYou have the following overdue book(s):\n\n` +
-                    books.map(b => `• ${b.bookName} (Due: ${moment(b.toDate).format("MMM DD, YYYY")})`).join("\n") +
-                    `\n\nPlease return them as soon as possible.\n\nThank you!`
-            });
-            alert("Notification sent to " + email);
-        } catch (err) {
-            console.error("Failed to send email:", err);
-            alert("Failed to send email");
-        }
-    };
+  const sendNotification = async (email, name, books) => {
+    try {
+        await axios.post(API_URL + "api/transactions/overdue-email", {
+            to: email,
+            subject: "Library Notice: Overdue Books",
+            text: `Hello ${name},\n\nYou have the following overdue book(s):\n\n` +
+                books.map(b => `• ${b.bookName} (Due: ${moment(b.toDate).format("MMM DD, YYYY")})`).join("\n") +
+                `\n\nPlease return them as soon as possible.\n\nThank you!`
+        });
+        alert("Notification sent to " + email);
+    } catch (err) {
+        console.error("Failed to send email:", err);
+        alert("Failed to send email");
+    }
+  };
 
-    return (
-        <div className="return-container">
+  return (
+    <div className="return-container">
         <h2 className="overdue-heading">Users with Overdue Books</h2>
         {Object.entries(overdueGroupedByUser).length === 0 ? (
             <p>No overdue books 🎉</p>
@@ -65,6 +80,7 @@ function Return() {
             Object.entries(overdueGroupedByUser).map(([userId, userData]) => (
             <div key={userId} className="overdue-user-card">
                 <h4>{userData.borrowerName}</h4>
+                <p><strong>Email:</strong> {userData.borrowerEmail}</p>
                 <table>
                 <thead>
                     <tr>
@@ -92,8 +108,8 @@ function Return() {
             </div>
             ))
         )}
-        </div>
-    );
+    </div>
+  );
 }
 
 export default Return;
