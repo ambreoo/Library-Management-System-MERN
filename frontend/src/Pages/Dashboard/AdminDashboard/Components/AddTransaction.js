@@ -24,10 +24,7 @@ function AddTransaction() {
     const [selectedBookDetails, setSelectedBookDetails] = useState(null);
 
     const [fromDate, setFromDate] = useState(null)
-    const [fromDateString, setFromDateString] = useState(null)
-
     const [toDate, setToDate] = useState(null)
-    const [toDateString, setToDateString] = useState(null)
 
     const transactionTypes = [
         { value: 'Reserved', text: 'Reserve' },
@@ -57,8 +54,8 @@ function AddTransaction() {
                     borrowerName: borrower_details.data.userFullName,
                     bookName: book_details.data.bookName,
                     transactionType: transactionType,
-                    fromDate: transactionType === "Issued" ? fromDateString : null,
-                    toDate: transactionType === "Issued" ? toDateString : null,
+                    fromDate: transactionType === "Issued" ? fromDate : null,
+                    toDate: transactionType === "Issued" ? toDate : null,                    
                     isAdmin: user.isAdmin
                 }
                 try {
@@ -87,8 +84,6 @@ function AddTransaction() {
                     setTransactionType("")
                     setFromDate(null)
                     setToDate(null)
-                    setFromDateString(null)
-                    setToDateString(null)
                     alert("Transaction was Successfull 🎉")
                 }
                 catch (err) {
@@ -291,7 +286,7 @@ function AddTransaction() {
                         className="date-picker"
                         placeholderText="MM/DD/YYYY"
                         selected={fromDate}
-                        onChange={(date) => { setFromDate(date); setFromDateString(moment(date).format("MM/DD/YYYY")) }}
+                        onChange={(date) => setFromDate(date)}
                         minDate={new Date()}
                         dateFormat="MM/dd/yyyy"
                     /><br />
@@ -301,7 +296,7 @@ function AddTransaction() {
                         className="date-picker"
                         placeholderText="MM/DD/YYYY"
                         selected={toDate}
-                        onChange={(date) => { setToDate(date); setToDateString(moment(date).format("MM/DD/YYYY")) }}
+                        onChange={(date) => setToDate(date)}
                         minDate={new Date()}
                         dateFormat="MM/dd/yyyy"
                     /><br />

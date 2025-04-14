@@ -55,9 +55,11 @@ function GetMember() {
         const getAllTransactions = async () =>{
             try{
                 const response = await axios.get(API_URL+"api/transactions/all-transactions")
-                setAllTransactions(response.data.sort((a, b) => Date.parse(a.toDate) - Date.parse(b.toDate)).filter((data) => {
-                    return data.transactionStatus === "Active"
-                }))
+                setAllTransactions(
+                    response.data
+                        .filter(data => data.transactionStatus === "Active")
+                        .sort((a, b) => new Date(a.toDate) - new Date(b.toDate))
+                );                
                 console.log("Okay")
                 setExecutionStatus(null)
             }
@@ -92,8 +94,8 @@ function GetMember() {
         try{
             await axios.put(API_URL+"api/transactions/update-transaction/"+transactionId,{
                 transactionType:"Issued",
-                fromDate: moment(fromDate).format("MM/DD/YYYY"),
-                toDate: moment(toDate).format("MM/DD/YYYY"),
+                fromDate,
+                toDate,                
                 isAdmin:user.isAdmin
             })
             await axios.post(API_URL + "api/books/convert-reservation", {
@@ -114,7 +116,7 @@ function GetMember() {
             await axios.put(API_URL+"api/transactions/update-transaction/"+transactionId,{
                 isAdmin:user.isAdmin,
                 transactionStatus:"Completed",
-                returnDate:moment(new Date()).format("MM/DD/YYYY")
+                returnDate: new Date()
             })
 
             /* Getting borrower points alreadt existed */
@@ -251,7 +253,7 @@ function GetMember() {
                                         <td>{data.bookName}</td>
                                         <td>{data.fromDate}</td>
                                         <td>{data.toDate}</td>
-                                        <td><button onClick={()=>{returnBook(data._id,data.borrowerId,data.bookId,(Math.floor(( Date.parse(moment(new Date()).format("MM/DD/YYYY")) - Date.parse(data.toDate) ) / 86400000)))}}>{t('getMember.return')}</button></td>
+                                        <td><button onClick={() => returnBook(data._id, data.borrowerId, data.bookId)}>{t('getMember.return')}</button></td>
                                     </tr>
                                 )
                             })
