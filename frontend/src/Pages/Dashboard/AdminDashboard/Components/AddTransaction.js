@@ -233,8 +233,8 @@ function AddTransaction() {
                                 <tr key={index}>
                                     <td>{data.bookName}</td>
                                     <td>{data.transactionType}</td>
-                                    <td>{data.fromDate ? data.fromDate : "-"}</td>
-                                    <td>{data.toDate ? data.toDate : "-"}</td>
+                                    <td>{data.fromDate ? moment(data.fromDate).format("MM/DD/YYYY") : "-"}</td>
+                                    <td>{data.toDate ? moment(data.toDate).format("MM/DD/YYYY") : "-"}</td>
                                     {/* <td>{(Math.floor((Date.parse(moment(new Date()).format("MM/DD/YYYY")) - Date.parse(data.toDate)) / 86400000)) <= 0 ? 0 : (Math.floor((Date.parse(moment(new Date()).format("MM/DD/YYYY")) - Date.parse(data.toDate)) / 86400000)) * 10}</td> */}
                                 </tr>
                             )

@@ -251,8 +251,8 @@ function GetMember() {
                                     <tr key={index}>
                                         <td>{index + 1}</td>
                                         <td>{data.bookName}</td>
-                                        <td>{data.fromDate}</td>
-                                        <td>{data.toDate}</td>
+                                        <td>{data.fromDate ? moment(data.fromDate).format("MM/DD/YYYY") : "-"}</td>
+                                        <td>{data.toDate ? moment(data.toDate).format("MM/DD/YYYY") : "-"}</td>
                                         <td><button onClick={() => returnBook(data._id, data.borrowerId, data.bookId)}>{t('getMember.return')}</button></td>
                                     </tr>
                                 )
@@ -365,9 +365,9 @@ function GetMember() {
                                     <tr key={index}>
                                         <td>{index+1}</td>
                                         <td>{data.bookName}</td>
-                                        <td>{data.fromDate}</td>
-                                        <td>{data.toDate}</td>
-                                        <td>{data.returnDate}</td>
+                                        <td>{data.fromDate ? moment(data.fromDate).format("MM/DD/YYYY") : "-"}</td>
+                                        <td>{data.toDate ? moment(data.toDate).format("MM/DD/YYYY") : "-"}</td>
+                                        <td>{data.returnDate ? moment(data.returnDate).format("MM/DD/YYYY") : "-"}</td>
                                     </tr>
                                 )
                             })
