@@ -16,22 +16,27 @@ function CompleteProfile() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}api/auth/complete-profile`, {
+      const res = await axios.post(`${process.env.REACT_APP_API_URL}api/auth/complete-profile`, {
         userId: user._id,
         userType,
         password,
         admissionId: userType === 'Student' ? admissionId : undefined,
         employeeId: userType === 'Staff' ? employeeId : undefined,
       });
-      history.push(userType === 'Admin' ? '/dashboard@admin' : '/dashboard@member');
+  
+      const updatedUser = res.data;
+  
+      dispatch({ type: "LOGIN_SUCCESS", payload: updatedUser });
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+  
+      history.push('/dashboard@member');
     } catch (err) {
-        console.error(err);
-        setError('Failed to complete profile.');
+      console.error(err);
+      setError('Failed to complete profile.');
     }
-  };
-
+  };  
   if (!user) {
     return (
       <div className="image-container">
