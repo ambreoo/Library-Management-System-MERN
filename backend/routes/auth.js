@@ -3,8 +3,7 @@ import User from "../models/User.js";
 import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { sendMail } from "../utils/sendMail.js";
-
-const { OAuth2Client } = require('google-auth-library');
+import { OAuth2Client } from 'google-auth-library';
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const router = express.Router();
