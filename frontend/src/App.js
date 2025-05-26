@@ -7,6 +7,7 @@ import BookDetails from './Pages/BookDetails';
 import Header from './Components/Header';
 import AdminDashboard from './Pages/Dashboard/AdminDashboard/AdminDashboard.js';
 import ResetPassword from './Pages/ResetPassword';
+import CompleteProfile from './Pages/CompleteProfile';
 import { useContext } from "react"
 import { AuthContext } from "./Context/AuthContext.js"
 
@@ -39,6 +40,7 @@ function App() {
           </Route>
           <Route exact path="/forgot-password"><ResetPassword /></Route>
           <Route exact path="/reset-password"><ResetPassword /></Route>
+          <Route exact path="/complete-profile"><CompleteProfile /></Route>
         </Switch>
       </div>
     </Router>

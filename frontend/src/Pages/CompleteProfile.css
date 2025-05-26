@@ -1,0 +1,65 @@
+.complete-profile-container {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+  
+  .complete-profile-card {
+    font-family: sans-serif;
+    padding: 20px;
+    border-radius: 45px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    text-align: center;
+    z-index: 3;
+    background-color: rgba(255, 255, 255, 0.85);
+  }
+  
+  h2 {
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .input-field-profile {
+    margin-bottom: 20px;
+    text-align: left;
+    margin-top: 15px;
+  }
+  
+  .input-profile {
+    width: 100%;
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+  }
+  
+  .complete-profile-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 20px;
+  }
+  
+  .complete-profile-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+  
+  .error-message {
+    color: red;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
