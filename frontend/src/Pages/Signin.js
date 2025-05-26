@@ -27,11 +27,15 @@ function Signin() {
             const user = res.data;
 
             // Check if profile is incomplete
-            if (!user.userType || !user.password || (!user.admissionId && !user.employeeId)) {
-                history.push('/complete-profile', { user }); // redirect to complete profile
+            if (!user.isComplete) {
+                dispatch({ type: "LOGIN_SUCCESS", payload: user });
+                localStorage.setItem("user", JSON.stringify(user));
+                history.push('/complete-profile', { user });
             } else {
                 dispatch({ type: "LOGIN_SUCCESS", payload: user });
-            }
+                localStorage.setItem("user", JSON.stringify(user));
+                history.push('/dashboard@member');
+            }              
         } catch (err) {
             console.error("Google login failed", err);
             setError("Google login failed.");

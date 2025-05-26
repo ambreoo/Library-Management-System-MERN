@@ -33,6 +33,10 @@ router.post('/google', async (req, res) => {
     }
 
     const { password, resetPasswordToken, resetPasswordExpires, ...safeUser } = user._doc;
+    const isComplete =
+      !!user.userType &&
+      !!user.password && 
+      (user.admissionId || user.employeeId);
     res.status(200).json(safeUser);
   } catch (err) {
       console.error("Error verifying Google token", err);
@@ -49,8 +53,14 @@ router.post('/complete-profile', async (req, res) => {
     if (!user) return res.status(404).json("User not found");
 
     if (userType) user.userType = userType;
-    if (admissionId) user.admissionId = admissionId;
-    if (employeeId) user.employeeId = employeeId;
+
+    if (userType === 'student') {
+      user.admissionId = admissionId;
+      user.employeeId = null;
+    } else if (userType === 'staff') {
+      user.employeeId = employeeId;
+      user.admissionId = null;
+    }
 
     if (password) {
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -62,8 +72,8 @@ router.post('/complete-profile', async (req, res) => {
     const { password: pw, resetPasswordToken, resetPasswordExpires, ...safeUser } = user._doc;
     res.status(200).json(safeUser);
   } catch (err) {
-      console.error(err);
-      res.status(500).json("Profile completion failed");
+    console.error(err);
+    res.status(500).json("Profile completion failed");
   }
 });
 
