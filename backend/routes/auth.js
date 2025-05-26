@@ -54,10 +54,10 @@ router.post('/complete-profile', async (req, res) => {
 
     if (userType) user.userType = userType;
 
-    if (userType === 'student') {
+    if (userType === 'Student') {
       user.admissionId = admissionId;
       user.employeeId = null;
-    } else if (userType === 'staff') {
+    } else if (userType === 'Staff') {
       user.employeeId = employeeId;
       user.admissionId = null;
     }
