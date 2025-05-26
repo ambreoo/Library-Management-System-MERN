@@ -4,6 +4,7 @@ import axios from 'axios'
 import { AuthContext } from '../Context/AuthContext.js'
 import Switch from '@material-ui/core/Switch';
 import { useTranslation } from 'react-i18next';
+import { GoogleLogin } from '@react-oauth/google';
 
 function Signin() {
     const { t } = useTranslation();
@@ -16,6 +17,20 @@ function Signin() {
     const { dispatch } = useContext(AuthContext)
 
     const API_URL = process.env.REACT_APP_API_URL
+
+    const handleGoogleLogin = async (credentialResponse) => {
+        try {
+            const token = credentialResponse.credential;
+    
+            // Send token to your backend
+            const res = await axios.post(API_URL + 'api/auth/google', { token });
+    
+            dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+        } catch (err) {
+            console.error("Google login failed", err);
+            setError("Google login failed.");
+        }
+    };    
     
     const loginCall = async (userCredential, dispatch) => {
         dispatch({ type: "LOGIN_START" });
@@ -89,7 +104,12 @@ function Signin() {
                         <input className='signin-textbox' type="password" minLength='6' placeholder={t('signin.enterPassword')} name="psw" required onChange={(e) => { setPassword(e.target.value) }} />
                         </div>
                     <button className="signin-button">{t('signin.title')}</button>
-                    <a className="forget-pass" onClick={handleForgotPassword}>{t('signin.forgotPassword')}</a>                
+                    <GoogleLogin
+                        onSuccess={handleGoogleLogin}
+                        onError={() => setError("Google login failed.")}
+                        useOneTap
+                    />   
+                    <a className="forget-pass" onClick={handleForgotPassword}>{t('signin.forgotPassword')}</a>             
                 </form>
                 <div className='signup-option'>
                     <p className="signup-question">{t('signin.noAccount')}</p>

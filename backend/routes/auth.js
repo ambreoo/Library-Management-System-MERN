@@ -4,9 +4,43 @@ import crypto from "crypto";
 import bcrypt from "bcrypt";
 import { sendMail } from "../utils/sendMail.js";
 
+const { OAuth2Client } = require('google-auth-library');
+const User = require('../models/User'); 
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
 const router = express.Router();
 const API_URL = process.env.REACT_APP_FRONTEND_URL
 const tokenExpireTime = 24 * 60 * 60 * 1000;
+
+router.post('/google', async (req, res) => {
+  const { token } = req.body;
+  try {
+      const ticket = await client.verifyIdToken({
+          idToken: token,
+          audience: process.env.GOOGLE_CLIENT_ID,
+      });
+      const payload = ticket.getPayload();
+      const { sub, email, name, picture } = payload;
+
+      // Check if user exists in DB
+      let user = await User.findOne({ googleId: sub });
+      if (!user) {
+          user = new User({
+              googleId: sub,
+              email,
+              name,
+              picture,
+          });
+          await user.save();
+      }
+
+      // Return session / JWT
+      res.status(200).json(user);
+  } catch (err) {
+      console.error("Error verifying Google token", err);
+      res.status(401).json({ error: 'Invalid token' });
+  }
+});
 
 /* User Registration */
 router.post("/register", async (req, res) => {

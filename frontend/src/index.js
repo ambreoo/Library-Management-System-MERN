@@ -6,12 +6,15 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { AuthContextProvider } from './Context/AuthContext';
 import './i18n';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
 ReactDOM.render(
   <React.StrictMode>
-    <AuthContextProvider>
-      <App />
-    </AuthContextProvider>
+    <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}>
+      <AuthContextProvider>
+        <App />
+      </AuthContextProvider>
+    </GoogleOAuthProvider>
   </React.StrictMode>,
   document.getElementById('root')
 );
