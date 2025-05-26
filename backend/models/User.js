@@ -3,13 +3,13 @@ import mongoose from "mongoose";
 const UserSchema = new mongoose.Schema({
     userType: {
         type: String,
-        require: true
+        required: function () { return !this.googleId; }
     },
     userFullName: {
         type: String,
-        require: true,
+        required: function () { return !this.googleId; },
         unique: true
-    },
+    },   
     admissionId: {
         type: String,
         min: 3,
@@ -35,7 +35,7 @@ const UserSchema = new mongoose.Schema({
     },
     mobileNumber: {
         type: Number,
-        require: true
+        required: function () { return !this.googleId; }
     },
     photo: {
         type: String,
@@ -49,7 +49,7 @@ const UserSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        require: true,
+        required: function () { return !this.googleId; },
         min: 6
     },
     points: {
@@ -68,6 +68,16 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    googleId: {
+        type: String,
+        unique: true,
+        sparse: true,
+      },
+    isGoogleUser: {
+        type: Boolean,
+        default: false
+    },
+      
     resetPasswordToken: String,
     resetPasswordExpires: Date,
 },
