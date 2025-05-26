@@ -25,8 +25,7 @@ function CompleteProfile() {
         admissionId: userType === 'student' ? admissionId : undefined,
         employeeId: userType === 'staff' ? employeeId : undefined,
       });
-
-      history.push(userType === 'admin' ? '/dashboard@admin' : '/dashboard@' + userType);
+        history.push(userType === 'admin' ? '/dashboard@admin' : '/dashboard@member');
     } catch (err) {
       console.error(err);
       setError('Failed to complete profile.');
