@@ -35,8 +35,8 @@ router.post('/google', async (req, res) => {
     const { password, resetPasswordToken, resetPasswordExpires, ...safeUser } = user._doc;
     res.status(200).json(safeUser);
   } catch (err) {
-    console.error("Error verifying Google token", err);
-    res.status(401).json({ error: 'Invalid token' });
+      console.error("Error verifying Google token", err);
+      res.status(401).json({ error: 'Invalid token' });
   }
 });
 
@@ -62,8 +62,8 @@ router.post('/complete-profile', async (req, res) => {
     const { password: pw, resetPasswordToken, resetPasswordExpires, ...safeUser } = user._doc;
     res.status(200).json(safeUser);
   } catch (err) {
-    console.error(err);
-    res.status(500).json("Profile completion failed");
+      console.error(err);
+      res.status(500).json("Profile completion failed");
   }
 });
 

@@ -22,13 +22,13 @@ function CompleteProfile() {
         userId: user._id,
         userType,
         password,
-        admissionId: userType === 'student' ? admissionId : undefined,
-        employeeId: userType === 'staff' ? employeeId : undefined,
+        admissionId: userType === 'Student' ? admissionId : undefined,
+        employeeId: userType === 'Staff' ? employeeId : undefined,
       });
-        history.push(userType === 'admin' ? '/dashboard@admin' : '/dashboard@member');
+      history.push(userType === 'Admin' ? '/dashboard@admin' : '/dashboard@member');
     } catch (err) {
-      console.error(err);
-      setError('Failed to complete profile.');
+        console.error(err);
+        setError('Failed to complete profile.');
     }
   };
 
@@ -61,19 +61,19 @@ function CompleteProfile() {
               <label>User Type</label>
               <select className="cp-input" value={userType} onChange={e => setUserType(e.target.value)} required>
                 <option value="">Select Role</option>
-                <option value="student">Student</option>
-                <option value="staff">Staff</option>
+                <option value="Student">Student</option>
+                <option value="Staff">Staff</option>
               </select>
             </div>
 
-            {userType === 'student' && (
+            {userType === 'Student' && (
               <div className="cp-input-field">
                 <label>Student ID</label>
                 <input className="cp-input" type="text" value={admissionId} onChange={e => setAdmissionId(e.target.value)} required />
               </div>
             )}
 
-            {userType === 'staff' && (
+            {userType === 'Staff' && (
               <div className="cp-input-field">
                 <label>Staff ID</label>
                 <input className="cp-input" type="text" value={employeeId} onChange={e => setEmployeeId(e.target.value)} required />
