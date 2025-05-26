@@ -37,7 +37,7 @@ router.post('/google', async (req, res) => {
       !!user.userType &&
       !!user.password && 
       (user.admissionId || user.employeeId);
-    res.status(200).json(safeUser);
+      res.status(200).json({ ...safeUser, isComplete });
   } catch (err) {
       console.error("Error verifying Google token", err);
       res.status(401).json({ error: 'Invalid token' });
