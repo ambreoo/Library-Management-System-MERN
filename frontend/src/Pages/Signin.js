@@ -5,6 +5,7 @@ import { AuthContext } from '../Context/AuthContext.js'
 import Switch from '@material-ui/core/Switch';
 import { useTranslation } from 'react-i18next';
 import { GoogleLogin } from '@react-oauth/google';
+import { useHistory } from 'react-router-dom';
 
 function Signin() {
     const { t } = useTranslation();
@@ -18,19 +19,24 @@ function Signin() {
 
     const API_URL = process.env.REACT_APP_API_URL
 
+    const history = useHistory();
     const handleGoogleLogin = async (credentialResponse) => {
         try {
             const token = credentialResponse.credential;
-    
-            // Send token to your backend
             const res = await axios.post(API_URL + 'api/auth/google', { token });
-    
-            dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+            const user = res.data;
+
+            // Check if profile is incomplete
+            if (!user.userType || !user.password || (!user.admissionId && !user.employeeId)) {
+                history.push('/complete-profile', { user }); // redirect to complete profile
+            } else {
+                dispatch({ type: "LOGIN_SUCCESS", payload: user });
+            }
         } catch (err) {
             console.error("Google login failed", err);
             setError("Google login failed.");
         }
-    };    
+    };   
     
     const loginCall = async (userCredential, dispatch) => {
         dispatch({ type: "LOGIN_START" });

@@ -40,6 +40,33 @@ router.post('/google', async (req, res) => {
   }
 });
 
+// Complete Profile for Google users
+router.post('/complete-profile', async (req, res) => {
+  try {
+    const { userId, userType, password, admissionId, employeeId } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json("User not found");
+
+    if (userType) user.userType = userType;
+    if (admissionId) user.admissionId = admissionId;
+    if (employeeId) user.employeeId = employeeId;
+
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+    }
+
+    await user.save();
+
+    const { password: pw, resetPasswordToken, resetPasswordExpires, ...safeUser } = user._doc;
+    res.status(200).json(safeUser);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json("Profile completion failed");
+  }
+});
+
 /* User Registration */
 router.post("/register", async (req, res) => {
   try {
