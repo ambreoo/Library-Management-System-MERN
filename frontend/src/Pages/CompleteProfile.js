@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { useLocation, useHistory } from 'react-router-dom';
+import { AuthContext } from '../Context/AuthContext';
 import axios from 'axios';
 import './CompleteProfile.css';
 
@@ -7,7 +8,7 @@ function CompleteProfile() {
   const { state } = useLocation();
   const history = useHistory();
   const user = state?.user;
-
+  const { dispatch } = useContext(AuthContext);
   const [userType, setUserType] = useState('');
   const [password, setPassword] = useState('');
   const [admissionId, setAdmissionId] = useState('');
