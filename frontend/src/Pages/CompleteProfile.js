@@ -49,23 +49,18 @@ function CompleteProfile() {
   }
 
   return (
-    <div className="image-container">
+    <div className="cp-image-container">
       <img className="d-block w-100" src="/school_picture4.jpg" alt="Background" />
-      <div className="image-overlay"></div>
+      <div className="cp-image-overlay"></div>
 
-      <div className="complete-profile-container">
-        <div className="complete-profile-card">
-          <h2>Complete Your Profile</h2>
-          {error && <div className="error-message">{error}</div>}
+      <div className="cp-container">
+        <div className="cp-card">
+          <h2 className="cp-title">Complete Your Profile</h2>
+          {error && <div className="cp-error-message">{error}</div>}
           <form onSubmit={handleSubmit}>
-            <div className="input-field-profile">
+            <div className="cp-input-field">
               <label>User Type</label>
-              <select
-                className="input-profile"
-                value={userType}
-                onChange={(e) => setUserType(e.target.value)}
-                required
-              >
+              <select className="cp-input" value={userType} onChange={e => setUserType(e.target.value)} required>
                 <option value="">Select Role</option>
                 <option value="student">Student</option>
                 <option value="staff">Staff</option>
@@ -73,47 +68,26 @@ function CompleteProfile() {
             </div>
 
             {userType === 'student' && (
-              <div className="input-field-profile">
+              <div className="cp-input-field">
                 <label>Student ID</label>
-                <input
-                  className="input-profile"
-                  type="text"
-                  value={admissionId}
-                  onChange={(e) => setAdmissionId(e.target.value)}
-                  required
-                />
+                <input className="cp-input" type="text" value={admissionId} onChange={e => setAdmissionId(e.target.value)} required />
               </div>
             )}
 
             {userType === 'staff' && (
-              <div className="input-field-profile">
+              <div className="cp-input-field">
                 <label>Staff ID</label>
-                <input
-                  className="input-profile"
-                  type="text"
-                  value={employeeId}
-                  onChange={(e) => setEmployeeId(e.target.value)}
-                  required
-                />
+                <input className="cp-input" type="text" value={employeeId} onChange={e => setEmployeeId(e.target.value)} required />
               </div>
             )}
 
-            <div className="input-field-profile">
+            <div className="cp-input-field">
               <label>Password</label>
-              <input
-                className="input-profile"
-                type="password"
-                minLength="6"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
+              <input className="cp-input" type="password" minLength="6" value={password} onChange={e => setPassword(e.target.value)} required />
             </div>
 
-            <div className="button-container">
-              <button className="complete-profile-button" type="submit">
-                Submit
-              </button>
+            <div className="cp-button-container">
+              <button className="cp-button" type="submit">Submit</button>
             </div>
           </form>
         </div>
