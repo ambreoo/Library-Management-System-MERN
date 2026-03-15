@@ -7,6 +7,7 @@ import userRoutes from "./routes/users.js";
 import bookRoutes from "./routes/books.js";
 import transactionRoutes from "./routes/transactions.js";
 import categoryRoutes from "./routes/categories.js";
+import chatRoutes from "./routes/chat.js";
 
 /* App Config */
 dotenv.config();
@@ -23,6 +24,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/books", bookRoutes);
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/categories", categoryRoutes);
+app.use("/api/chat", chatRoutes);
 
 /* MongoDB connection */
 mongoose.connect(

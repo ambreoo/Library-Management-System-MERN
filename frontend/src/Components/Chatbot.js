@@ -7,40 +7,42 @@ function Chatbot() {
   const [input, setInput] = useState("");
   const [isResponding, setIsResponding] = useState(false);
 
-  const handleSend = async () => {
-    if (!input.trim()) return;
+const handleSend = async () => {
+  if (!input.trim()) return;
 
-    const userMessage = { sender: "user", text: input };
-    setMessages((prev) => [...prev, userMessage]);
-    setInput("");
-    setIsResponding(true);
+  const currentInput = input;
+  setMessages((prev) => [...prev, { sender: "user", text: currentInput }]);
+  setInput("");
+  setIsResponding(true);
 
-    try {
-      const res = await fetch("http://localhost:11434/api/generate", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          model: "llama3",
-          prompt: input,
-          stream: false,
-        }),
-      });
+  try {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}api/chat`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message: currentInput }),
+    });
 
-      const data = await res.json();
-      setMessages((prev) => [
-        ...prev,
-        { sender: "bot", text: data.response || "Sorry, I couldn’t process that." },
-      ]);
-    } catch (err) {
-        console.error("Chat error:", err);
-        setMessages((prev) => [
-          ...prev,
-          { sender: "bot", text: "Error connecting to Ollama." },
-        ]);
-    } finally {
-        setIsResponding(false);
-    }
-  };
+    const data = await res.json();
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        sender: "bot",
+        text: data.reply || "Sorry, I couldn’t process that.",
+      },
+    ]);
+  } catch (err) {
+    console.error("Chat error:", err);
+    setMessages((prev) => [
+      ...prev,
+      { sender: "bot", text: "Failed to connect to the chatbot." },
+    ]);
+  } finally {
+    setIsResponding(false);
+  }
+};
 
   return (
     <>
