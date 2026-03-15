@@ -14,12 +14,11 @@ router.post("/", async (req, res) => {
 
     // basic search against your library DB
     const books = await Book.find({
-      $or: [
+    $or: [
         { bookName: { $regex: message, $options: "i" } },
         { author: { $regex: message, $options: "i" } },
-        { publisher: { $regex: message, $options: "i" } },
-        { categories: { $regex: message, $options: "i" } },
-      ],
+        { publisher: { $regex: message, $options: "i" } }
+    ]
     }).limit(5);
 
     const libraryContext =
